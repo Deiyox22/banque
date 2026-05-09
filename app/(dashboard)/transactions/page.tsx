@@ -25,7 +25,6 @@ export default async function TransactionsPage() {
           <h1 className="text-3xl font-bold tracking-tight text-[#f472b6]">Transactions</h1>
           <p className="text-gray-400">Gérez l'ensemble de vos revenus et dépenses personnels.</p>
         </div>
-        <TransactionModal mode="button" />
       </div>
 
       <div className="grid gap-8">
