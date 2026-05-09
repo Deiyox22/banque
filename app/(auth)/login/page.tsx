@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, ShieldCheck, Heart, Baby, Target, ArrowRight, Wallet } from 'lucide-react';
 import Navbar from '@/components/shared/Navbar';
-import { Dialog } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function LandingAuthPage() {
   const [email, setEmail] = useState('');
@@ -121,76 +121,78 @@ export default function LandingAuthPage() {
       </div>
 
       {/* Auth Modal */}
-      <Dialog 
-        isOpen={isAuthOpen} 
-        onClose={() => setIsAuthOpen(false)}
-        title={authTab === 'login' ? 'Bienvenue chez VAULT' : 'Créer votre compte'}
-      >
-        <Tabs value={authTab} onValueChange={(v) => setAuthTab(v as any)} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/40 p-1 border border-white/5">
-            <TabsTrigger value="login" className="data-[state=active]:bg-[#f472b6] data-[state=active]:text-[#0d0811]">Connexion</TabsTrigger>
-            <TabsTrigger value="register" className="data-[state=active]:bg-[#f472b6] data-[state=active]:text-[#0d0811]">Inscription</TabsTrigger>
-          </TabsList>
+      <Dialog open={isAuthOpen} onOpenChange={setIsAuthOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle>{authTab === 'login' ? 'Bienvenue chez VAULT' : 'Créer votre compte'}</DialogTitle>
+          </DialogHeader>
+          <Tabs value={authTab} onValueChange={(v) => setAuthTab(v as any)} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-8 bg-black/40 p-1 border border-white/5">
+              <TabsTrigger value="login" className="data-[state=active]:bg-[#f472b6] data-[state=active]:text-[#0d0811]">Connexion</TabsTrigger>
+              <TabsTrigger value="register" className="data-[state=active]:bg-[#f472b6] data-[state=active]:text-[#0d0811]">Inscription</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="login">
-            <form onSubmit={handleLogin} className="space-y-4 text-left">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email" type="email" placeholder="maia@exemple.com"
-                  value={email} onChange={(e) => setEmail(e.target.value)} required
-                  className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
-                <Input 
-                  id="password" type="password"
-                  value={password} onChange={(e) => setPassword(e.target.value)} required
-                  className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
-                />
-              </div>
-              <Button type="submit" disabled={loading} className="h-12 w-full bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90 mt-4 rounded-xl">
-                {loading ? 'Connexion...' : 'Accéder à mon VAULT'}
-                <ArrowRight size={18} className="ml-2" />
-              </Button>
-            </form>
-          </TabsContent>
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4 text-left">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input 
+                    id="email" type="email" placeholder="maia@exemple.com"
+                    value={email} onChange={(e) => setEmail(e.target.value)} required
+                    className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Mot de passe</Label>
+                  <Input 
+                    id="password" type="password"
+                    value={password} onChange={(e) => setPassword(e.target.value)} required
+                    className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
+                  />
+                </div>
+                <Button type="submit" disabled={loading} className="h-12 w-full bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90 mt-4 rounded-xl">
+                  {loading ? 'Connexion...' : 'Accéder à mon VAULT'}
+                  <ArrowRight size={18} className="ml-2" />
+                </Button>
+              </form>
+            </TabsContent>
 
-          <TabsContent value="register">
-            <form onSubmit={handleRegister} className="space-y-4 text-left">
-              <div className="space-y-2">
-                <Label htmlFor="reg-name">Nom d'affichage</Label>
-                <Input 
-                  id="reg-name" placeholder="Maïa"
-                  value={displayName} onChange={(e) => setDisplayName(e.target.value)} required
-                  className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="reg-email">Email</Label>
-                <Input 
-                  id="reg-email" type="email" placeholder="maia@exemple.com"
-                  value={email} onChange={(e) => setEmail(e.target.value)} required
-                  className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="reg-password">Mot de passe</Label>
-                <Input 
-                  id="reg-password" type="password"
-                  value={password} onChange={(e) => setPassword(e.target.value)} required
-                  className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
-                />
-              </div>
-              <Button type="submit" disabled={loading} className="h-12 w-full bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90 mt-4 rounded-xl">
-                {loading ? 'Création...' : 'Créer mon compte'}
-                <Heart size={18} className="ml-2" />
-              </Button>
-            </form>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="register">
+              <form onSubmit={handleRegister} className="space-y-4 text-left">
+                <div className="space-y-2">
+                  <Label htmlFor="reg-name">Nom d'affichage</Label>
+                  <Input 
+                    id="reg-name" placeholder="Maïa"
+                    value={displayName} onChange={(e) => setDisplayName(e.target.value)} required
+                    className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reg-email">Email</Label>
+                  <Input 
+                    id="reg-email" type="email" placeholder="maia@exemple.com"
+                    value={email} onChange={(e) => setEmail(e.target.value)} required
+                    className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reg-password">Mot de passe</Label>
+                  <Input 
+                    id="reg-password" type="password"
+                    value={password} onChange={(e) => setPassword(e.target.value)} required
+                    className="h-12 bg-black/40 border-white/10 focus:border-[#f472b6]/50 rounded-xl"
+                  />
+                </div>
+                <Button type="submit" disabled={loading} className="h-12 w-full bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90 mt-4 rounded-xl">
+                  {loading ? 'Création...' : 'Créer mon compte'}
+                  <Heart size={18} className="ml-2" />
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
       </Dialog>
+
 
       {/* Footer */}
       <footer className="relative z-10 py-12 border-t border-white/5 text-center text-gray-500 text-sm">
