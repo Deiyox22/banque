@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import BalanceCard from '@/components/dashboard/BalanceCard';
-import SpendingDonut from '@/components/dashboard/SpendingDonut';
-import BalanceLine from '@/components/dashboard/BalanceLine';
+import { Card } from '@/components/ui/card';
+import SpendingChart from '@/components/dashboard/SpendingChart';
 import RecentTransactions from '@/components/dashboard/RecentTransactions';
 import TransactionModal from '@/components/shared/TransactionModal';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -92,7 +92,11 @@ export default async function DashboardPage({
         <BalanceCard title="Économies" amount={totalSavings} type="savings" />
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="border-[#f472b6]/10 bg-[#13131a]/80 backdrop-blur-sm shadow-xl p-4">
+            <h2 className="text-lg font-bold text-white mb-4">Répartition des dépenses</h2>
+            <SpendingChart transactions={transactions || []} />
+        </Card>
         <RecentTransactions transactions={transactions || []} />
       </div>
 
