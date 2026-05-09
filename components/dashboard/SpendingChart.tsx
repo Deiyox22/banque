@@ -12,7 +12,7 @@ export default function SpendingChart({ transactions }: { transactions: any[] })
       return acc;
     }, {} as Record<string, number>);
 
-  const data = Object.entries(expenseData).map(([name, value]) => ({ name, value }));
+  const data: { name: string, value: number }[] = Object.entries(expenseData).map(([name, value]) => ({ name, value }));
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
