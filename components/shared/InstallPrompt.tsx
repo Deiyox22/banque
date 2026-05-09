@@ -58,17 +58,17 @@ export default function InstallPrompt() {
 
   return (
     <div className="fixed bottom-20 left-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300 md:bottom-6 md:left-auto md:right-6 md:w-96">
-      <div className="overflow-hidden rounded-xl border border-[#6366f1] bg-[#13131a] shadow-2xl">
+      <div className="overflow-hidden rounded-2xl border border-[#f472b6]/20 bg-[#1a1122] shadow-2xl">
         <div className="p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#6366f1]/20 text-[#6366f1]">
-                <span className="text-xl font-bold">V</span>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f472b6]/10 text-[#f472b6]">
+                <span className="text-xl font-bold italic">V</span>
               </div>
               <div>
                 <h3 className="font-bold text-white">Installer VAULT</h3>
                 <p className="text-sm text-gray-400">
-                  Ajoutez l'app sur votre écran d'accueil pour un accès rapide.
+                  Accédez à votre budget instantanément.
                 </p>
               </div>
             </div>
@@ -82,7 +82,7 @@ export default function InstallPrompt() {
 
           <div className="mt-4 flex gap-2">
             {isIOS ? (
-              <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#6366f1]/10 p-3 text-xs text-[#6366f1]">
+              <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#f472b6]/10 p-3 text-xs text-[#f472b6]">
                 <Share size={16} />
                 <span>
                   Appuyez sur <span className="font-bold">Partager</span> puis{' '}
@@ -93,7 +93,7 @@ export default function InstallPrompt() {
               <>
                 <Button
                   onClick={handleInstall}
-                  className="flex-1 bg-[#6366f1] font-bold hover:bg-[#4f46e5]"
+                  className="flex-1 bg-[#f472b6] text-black font-bold hover:bg-[#f472b6]/90 rounded-xl"
                 >
                   <Download size={18} className="mr-2" />
                   Installer
