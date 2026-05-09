@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { deleteTransaction } from '@/lib/actions/transactions';
 import TransactionModal from '@/components/shared/TransactionModal';
 
+export const dynamic = 'force-dynamic';
+
 export default async function TransactionsPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();

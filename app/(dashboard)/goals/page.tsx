@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import GoalsClient from './GoalsClient';
 
+export const dynamic = 'force-dynamic';
+
 export default async function GoalsPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
