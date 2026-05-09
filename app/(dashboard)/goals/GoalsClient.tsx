@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import GoalCard from '@/components/shared/GoalCard';
 import AddSavingsModal from '@/components/shared/AddSavingsModal';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import GoalModal from '@/components/shared/GoalModal';
 
 export default function GoalsClient({ goals: initialGoals }: { goals: any[] }) {
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
@@ -16,10 +15,7 @@ export default function GoalsClient({ goals: initialGoals }: { goals: any[] }) {
           <h1 className="text-3xl font-bold tracking-tight text-[#f472b6]">Objectifs d'Épargne</h1>
           <p className="text-gray-400">Suivez vos progrès vers vos projets et rêves.</p>
         </div>
-        <Button className="bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90">
-          <Plus size={20} className="mr-2" />
-          Nouvel objectif
-        </Button>
+        <GoalModal />
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
