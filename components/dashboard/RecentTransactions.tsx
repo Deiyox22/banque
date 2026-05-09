@@ -2,7 +2,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusCircle, MinusCircle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusCircle, MinusCircle, ArrowUpRight, ArrowDownRight, PenLine, Trash2 } from 'lucide-react';
+import TransactionModal from '@/components/shared/TransactionModal';
+import { Button } from '@/components/ui/button';
+import { deleteTransaction } from '@/lib/actions/transactions';
 
 interface Transaction {
   id: string;
@@ -66,7 +69,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                   </div>
                 </div>
               </div>
-              <div className="text-right flex flex-col items-end">
+              <div className="flex items-center gap-2">
                 <div className={cn(
                   "font-mono font-black text-sm sm:text-base flex items-center gap-1",
                   tx.type === 'income' ? "text-emerald-400" : "text-rose-400"
@@ -74,7 +77,17 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                   {tx.type === 'income' ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                   {formatCurrency(tx.amount)}
                 </div>
-                <span className="text-[10px] text-gray-600 font-medium">Confirmé</span>
+                <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                    <TransactionModal transaction={tx} />
+                    <form action={async () => {
+                        'use server';
+                        await deleteTransaction(tx.id);
+                    }}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:text-rose-400">
+                            <Trash2 size={16} />
+                        </Button>
+                    </form>
+                </div>
               </div>
             </div>
           ))}
@@ -93,7 +106,3 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
     </Card>
   );
 }
-
-// Helper icons (need to be imported correctly, adding PenLine for empty state)
-import { PenLine } from 'lucide-react';
-

@@ -7,7 +7,7 @@ import { transactionSchema } from '@/lib/validations/schemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createTransaction } from '@/lib/actions/transactions';
+import { createTransaction, updateTransaction } from '@/lib/actions/transactions';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PlusCircle, MinusCircle, Tag, Calendar, PenLine, CreditCard, RotateCw } from 'lucide-react';
@@ -15,12 +15,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const CATEGORIES = ['Alimentation', 'Loyer', 'Loisirs', 'Transports', 'Santé', 'Éducation', 'Autres'];
 
-export default function TransactionForm({ onSuccess }: { onSuccess?: () => void }) {
+export default function TransactionForm({ onSuccess, initialData }: { onSuccess?: () => void, initialData?: any }) {
   const [error, setError] = useState<string | null>(null);
-  
+
   const { register, handleSubmit, control, formState: { errors, isSubmitting }, reset, watch } = useForm<any>({
     resolver: zodResolver(transactionSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       date: new Date().toISOString().split('T')[0],
       type: 'expense',
       is_recurring: false,
@@ -31,14 +31,17 @@ export default function TransactionForm({ onSuccess }: { onSuccess?: () => void 
 
   const onSubmit = async (data: any) => {
     try {
-      await createTransaction(data);
+      if (initialData) {
+        await updateTransaction(initialData.id, data);
+      } else {
+        await createTransaction(data);
+      }
       reset();
       if (onSuccess) onSuccess();
     } catch (err: any) {
       setError(err.message);
     }
   };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {error && <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm">{error}</div>}

@@ -17,10 +17,18 @@ export async function createTransaction(formData: any) {
     return { error: validatedFields.error.flatten().fieldErrors };
   }
 
+  // Nettoyage des champs vides
+  const data = Object.fromEntries(
+    Object.entries(validatedFields.data).map(([key, value]) => [
+      key,
+      value === '' || value === undefined ? null : value
+    ])
+  );
+
   const { error } = await supabase
     .from('transactions')
     .insert({
-      ...validatedFields.data,
+      ...data,
       owner_id: user.id,
     });
 

@@ -7,7 +7,6 @@ import {
   LayoutDashboard, 
   ArrowLeftRight, 
   Target, 
-  Baby, 
   Settings, 
   LogOut,
   Menu,
@@ -23,7 +22,6 @@ const routes = [
   { label: 'Dashboard', icon: LayoutDashboard, href: '/' },
   { label: 'Transactions', icon: ArrowLeftRight, href: '/transactions' },
   { label: 'Objectifs', icon: Target, href: '/goals' },
-  { label: 'Enfants', icon: Baby, href: '/children' },
   { label: 'Paramètres', icon: Settings, href: '/settings' },
 ];
 

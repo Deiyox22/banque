@@ -16,9 +16,10 @@ import { cn } from '@/lib/utils';
 
 interface TransactionModalProps {
   mode?: 'fab' | 'button';
+  transaction?: any;
 }
 
-export default function TransactionModal({ mode = 'button' }: TransactionModalProps) {
+export default function TransactionModal({ mode = 'button', transaction }: TransactionModalProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,17 +31,16 @@ export default function TransactionModal({ mode = 'button' }: TransactionModalPr
           </button>
         ) : (
           <Button className="bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90 shadow-[0_0_20px_rgba(244,114,182,0.3)]">
-            <Plus size={20} className="mr-2" />
-            Nouvelle transaction
+            {transaction ? 'Modifier' : <><Plus size={20} className="mr-2" />Nouvelle transaction</>}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Ajouter une transaction ✨</DialogTitle>
+          <DialogTitle>{transaction ? 'Modifier' : 'Ajouter'} une transaction ✨</DialogTitle>
         </DialogHeader>
         <div className="mt-4">
-          <TransactionForm onSuccess={() => setOpen(false)} />
+          <TransactionForm initialData={transaction} onSuccess={() => setOpen(false)} />
         </div>
       </DialogContent>
     </Dialog>
