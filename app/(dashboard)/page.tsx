@@ -67,34 +67,32 @@ export default async function DashboardPage({
   const monthName = new Date(year, month - 1).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-[#f472b6]">Bonjour {displayName} ! ✨</h1>
-          <div className="flex items-center gap-4 mt-2">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href={`/?month=${month === 1 ? 12 : month - 1}&year=${month === 1 ? year - 1 : year}`}>
-                <ChevronLeft size={20} />
-              </Link>
-            </Button>
-            <span className="text-lg font-bold capitalize">{monthName}</span>
-            <Button variant="ghost" size="icon" asChild>
-              <Link href={`/?month=${month === 12 ? 1 : month + 1}&year=${month === 12 ? year + 1 : year}`}>
-                <ChevronRight size={20} />
-              </Link>
-            </Button>
-          </div>
+    <div className="space-y-6 pb-20 w-full overflow-hidden">
+      <div className="flex flex-col gap-4 px-1">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#f472b6]">Bonjour {displayName} ! ✨</h1>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={`/?month=${month === 1 ? 12 : month - 1}&year=${month === 1 ? year - 1 : year}`}>
+              <ChevronLeft size={20} />
+            </Link>
+          </Button>
+          <span className="text-base sm:text-lg font-bold capitalize">{monthName}</span>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href={`/?month=${month === 12 ? 1 : month + 1}&year=${month === 12 ? year + 1 : year}`}>
+              <ChevronRight size={20} />
+            </Link>
+          </Button>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <BalanceCard title="Solde" amount={balance} type="total" />
         <BalanceCard title="Revenus" amount={totalIncome} type="income" />
         <BalanceCard title="Dépenses" amount={totalExpense} type="expense" />
         <BalanceCard title="Économies" amount={totalSavings} type="savings" />
       </div>
 
-      <div className="grid gap-8">
+      <div className="grid gap-6">
         <RecentTransactions transactions={transactions || []} />
       </div>
 

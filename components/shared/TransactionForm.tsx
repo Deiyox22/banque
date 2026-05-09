@@ -13,7 +13,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PlusCircle, MinusCircle, Tag, Calendar, PenLine, CreditCard, RotateCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const CATEGORIES = ['Alimentation', 'Loyer', 'Loisirs', 'Transports', 'Santé', 'Éducation', 'Autres'];
+const EXPENSE_CATEGORIES = ['Alimentation', 'Loyer', 'Loisirs', 'Transports', 'Santé', 'Éducation', 'Autres'];
+const INCOME_CATEGORIES = ['Salaire', 'Dividendes', 'Vente', 'Cadeau', 'Autre'];
 
 export default function TransactionForm({ onSuccess, initialData }: { onSuccess?: () => void, initialData?: any }) {
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +28,9 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
     }
   });
 
+  const type = watch('type');
   const isRecurring = watch('is_recurring');
+  const categories = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
   const onSubmit = async (data: any) => {
     try {
@@ -42,10 +45,11 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
       setError(err.message);
     }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {error && <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm">{error}</div>}
-      
+
       <div className="space-y-4">
         <Controller
           name="type"
@@ -73,7 +77,7 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
 
         <div className="space-y-2">
           <Label className="text-gray-400">Libellé</Label>
-          <Input {...register('label')} className="h-12 bg-black/20" placeholder="Ex: Loyer" />
+          <Input {...register('label')} className="h-12 bg-black/20" placeholder="Ex: Salaire ou Loyer" />
         </div>
 
         <div className="space-y-2">
@@ -87,7 +91,7 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
                             <SelectValue placeholder="Sélectionnez une catégorie" />
                         </SelectTrigger>
                         <SelectContent className="bg-[#1a1122]">
-                            {CATEGORIES.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                            {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
                         </SelectContent>
                     </Select>
                 )}

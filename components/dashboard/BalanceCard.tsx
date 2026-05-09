@@ -22,20 +22,20 @@ export default function BalanceCard({ title, amount, type = 'total' }: BalanceCa
 
   return (
     <Card className="border-[#f472b6]/10 bg-[#1a1122]">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-gray-400">{title}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4">
+        <CardTitle className="text-xs font-medium text-gray-400 truncate">{title}</CardTitle>
         <div className={cn(
-          "rounded-full p-2",
+          "rounded-full p-1.5",
           type === 'income' && "bg-green-500/10 text-green-500",
           type === 'expense' && "bg-rose-500/10 text-rose-500",
           type === 'total' && "bg-[#f472b6]/10 text-[#f472b6]",
           type === 'savings' && "bg-[#c084fc]/10 text-[#c084fc]",
         )}>
-          <Icon size={18} />
+          <Icon size={14} />
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold font-mono text-[#f472b6]">
+      <CardContent className="p-4 pt-0">
+        <div className="text-lg font-bold font-mono text-[#f472b6] truncate">
           {formatCurrency(amount)}
         </div>
       </CardContent>

@@ -40,7 +40,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
     <Card className="border-[#f472b6]/10 bg-[#13131a]/80 backdrop-blur-sm shadow-xl">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-lg font-bold text-white">Dernières transactions</CardTitle>
-        <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#f472b6]/10 text-[#f472b6] border border-[#f472b6]/20">
+        <span className="hidden sm:block text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#f472b6]/10 text-[#f472b6] border border-[#f472b6]/20">
           Activité récente
         </span>
       </CardHeader>
@@ -49,36 +49,35 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
           {transactions.map((tx) => (
             <div 
               key={tx.id} 
-              className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/5"
+              className="flex flex-col p-4 rounded-2xl bg-[#1a1122]/50 border border-white/[0.08] shadow-sm transition-all hover:border-[#f472b6]/30 w-full gap-2"
             >
-              <div className="flex items-center gap-4">
-                <div className={cn(
-                  "h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110",
-                  tx.type === 'income' ? "bg-emerald-500/10" : "bg-rose-500/10"
-                )}>
-                  {getCategoryIcon(tx.category || tx.label, tx.type)}
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                    <div className={cn(
+                    "h-10 w-10 rounded-2xl flex items-center justify-center shrink-0",
+                    tx.type === 'income' ? "bg-emerald-500/10" : "bg-rose-500/10"
+                    )}>
+                    {getCategoryIcon(tx.category || tx.label, tx.type)}
+                    </div>
+                    <div className="flex flex-col min-w-0 overflow-hidden">
+                        <span className="font-bold text-white text-sm truncate">{tx.label}</span>
+                        <span className="text-[11px] text-gray-500 truncate">{tx.category || 'Général'}</span>
+                    </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-bold text-white text-sm sm:text-base">{tx.label}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 font-medium">{tx.category || 'Général'}</span>
-                    <span className="text-[10px] text-gray-600">•</span>
-                    <span className="text-[10px] text-gray-500 font-mono uppercase">
-                      {new Date(tx.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
-                    </span>
-                  </div>
+                <div className={cn(
+                    "font-mono font-black text-sm shrink-0",
+                    tx.type === 'income' ? "text-emerald-400" : "text-rose-400"
+                )}>
+                    {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className={cn(
-                  "font-mono font-black text-sm sm:text-base flex items-center gap-1",
-                  tx.type === 'income' ? "text-emerald-400" : "text-rose-400"
-                )}>
-                  {tx.type === 'income' ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                  {formatCurrency(tx.amount)}
-                </div>
-                <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
-                    <TransactionModal transaction={tx} />
+              
+              <div className="flex items-center justify-between w-full border-t border-white/5 pt-2">
+                <span className="text-[10px] text-gray-500 font-mono uppercase">
+                    {new Date(tx.date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
+                </span>
+                <div className="flex">
+                    <TransactionModal mode="icon" transaction={tx} />
                     <form action={async () => {
                         'use server';
                         await deleteTransaction(tx.id);
