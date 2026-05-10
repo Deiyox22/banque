@@ -4,6 +4,7 @@ import { formatCurrency } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
+import WithdrawModal from './WithdrawModal';
 
 interface GoalCardProps {
   id: string;
@@ -25,7 +26,7 @@ export default function GoalCard({
   onAddSavings 
 }: GoalCardProps) {
   const percentage = Math.min((current_amount / target_amount) * 100, 100);
-  
+
   return (
     <Card className="border-[#f472b6]/10 bg-[#1a1122]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -33,14 +34,17 @@ export default function GoalCard({
           <div className="h-3 w-3 rounded-full shadow-[0_0_10px_rgba(244,114,182,0.5)]" style={{ backgroundColor: color }} />
           <CardTitle className="text-lg font-bold">{name}</CardTitle>
         </div>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => onAddSavings(id)}
-          className="h-8 w-8 text-[#f472b6] hover:bg-[#f472b6]/10"
-        >
-          <Plus size={18} />
-        </Button>
+        <div className="flex items-center gap-1">
+            <WithdrawModal id={id} name={name} />
+            <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => onAddSavings(id)}
+                className="h-8 w-8 text-[#f472b6] hover:bg-[#f472b6]/10"
+            >
+                <Plus size={18} />
+            </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="mb-4">

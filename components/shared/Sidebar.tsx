@@ -1,8 +1,8 @@
 // components/shared/Sidebar.tsx
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link } from 'next-view-transitions';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { 
   LayoutDashboard, 
   ArrowLeftRight, 
@@ -27,6 +27,7 @@ const routes = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const supabase = createClient();
@@ -35,6 +36,12 @@ export default function Sidebar() {
     await supabase.auth.signOut();
     router.push('/login');
     router.refresh();
+  };
+
+  const getHref = (href: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const queryString = params.toString();
+    return queryString ? `${href}?${queryString}` : href;
   };
 
   return (
@@ -47,7 +54,7 @@ export default function Sidebar() {
           return (
             <Link 
               key={route.href} 
-              href={route.href}
+              href={getHref(route.href)}
               className={cn(
                 "flex flex-col items-center gap-1 p-2 transition-colors",
                 active ? "text-[#f472b6]" : "text-gray-500"
@@ -81,7 +88,7 @@ export default function Sidebar() {
             return (
               <Link
                 key={route.href}
-                href={route.href}
+                href={getHref(route.href)}
                 className={cn(
                   "flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-white/5",
                   active ? "bg-[#f472b6]/10 text-[#f472b6]" : "text-gray-400 hover:text-white",

@@ -1,6 +1,7 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { ViewTransitions } from 'next-view-transitions';
 import './globals.css';
 import PWARegister from '@/components/shared/PWARegister';
 import InstallPrompt from '@/components/shared/InstallPrompt';
@@ -40,14 +41,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0f] text-white`}
-      >
-        <PWARegister />
-        <main>{children}</main>
-        <InstallPrompt />
-      </body>
-    </html>
+    <ViewTransitions>
+      <html lang="fr" className="dark">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0f] text-white`}
+        >
+          <PWARegister />
+          <main>{children}</main>
+          <InstallPrompt />
+        </body>
+      </html>
+    </ViewTransitions>
   );
 }

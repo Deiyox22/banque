@@ -1,8 +1,9 @@
 // components/dashboard/RecentTransactions.tsx
+import { Link } from 'next-view-transitions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusCircle, MinusCircle, ArrowUpRight, ArrowDownRight, PenLine, Trash2 } from 'lucide-react';
+import { ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusCircle, MinusCircle, PenLine, Trash2, ArrowRight } from 'lucide-react';
 import TransactionModal from '@/components/shared/TransactionModal';
 import { Button } from '@/components/ui/button';
 import { deleteTransaction } from '@/lib/actions/transactions';
@@ -36,17 +37,18 @@ const getCategoryIcon = (category: string, type: 'income' | 'expense') => {
 };
 
 export default function RecentTransactions({ transactions }: RecentTransactionsProps) {
+  const recent = [...transactions]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
+
   return (
     <Card className="border-[#f472b6]/10 bg-[#13131a]/80 backdrop-blur-sm shadow-xl">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-lg font-bold text-white">Dernières transactions</CardTitle>
-        <span className="hidden sm:block text-xs font-medium px-2.5 py-0.5 rounded-full bg-[#f472b6]/10 text-[#f472b6] border border-[#f472b6]/20">
-          Activité récente
-        </span>
       </CardHeader>
       <CardContent>
         <div className="space-y-1">
-          {transactions.map((tx) => (
+          {recent.map((tx) => (
             <div 
               key={tx.id} 
               className="flex flex-col p-4 rounded-2xl bg-[#1a1122]/50 border border-white/[0.08] shadow-sm transition-all hover:border-[#f472b6]/30 w-full gap-2"
@@ -90,7 +92,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
               </div>
             </div>
           ))}
-          {transactions.length === 0 && (
+          {recent.length === 0 && (
             <div className="py-12 text-center flex flex-col items-center gap-3">
               <div className="h-12 w-12 rounded-full bg-white/5 flex items-center justify-center text-gray-600">
                 <PenLine size={24} />
@@ -101,6 +103,9 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
             </div>
           )}
         </div>
+        <Button variant="ghost" className="w-full mt-4 text-xs text-gray-400 hover:text-[#f472b6] hover:bg-transparent" asChild>
+            <Link href="/transactions">Voir l'historique complet <ArrowRight size={14} className="ml-1" /></Link>
+        </Button>
       </CardContent>
     </Card>
   );

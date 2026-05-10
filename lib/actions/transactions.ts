@@ -68,6 +68,35 @@ export async function deleteTransaction(id: string) {
 
   if (!user) throw new Error('Non authentifié');
 
+  // 1. Get transaction info
+  const { data: tx } = await supabase
+    .from('transactions')
+    .select('label, amount, type, category')
+    .eq('id', id)
+    .eq('owner_id', user.id)
+    .single();
+
+  if (!tx) throw new Error('Transaction non trouvée');
+
+  // 2. If it's a savings transaction, update the goal
+  if (tx.category === 'Économies') {
+    const goalName = tx.label.replace('Épargne: ', '').replace('Retrait épargne: ', '');
+    const { data: goal } = await supabase
+        .from('savings_goals')
+        .select('id, current_amount')
+        .eq('name', goalName)
+        .eq('owner_id', user.id)
+        .single();
+    
+    if (goal) {
+        const adjustment = tx.type === 'expense' ? -tx.amount : tx.amount;
+        await supabase
+            .from('savings_goals')
+            .update({ current_amount: goal.current_amount - adjustment })
+            .eq('id', goal.id);
+    }
+  }
+
   const { error } = await supabase
     .from('transactions')
     .delete()
@@ -77,5 +106,6 @@ export async function deleteTransaction(id: string) {
   if (error) throw new Error(error.message);
 
   revalidatePath('/transactions');
+  revalidatePath('/goals');
   revalidatePath('/');
 }

@@ -8,7 +8,8 @@ export default function SpendingChart({ transactions }: { transactions: any[] })
   // Calculer les données par catégorie
   const expenseData = transactions
     .reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+      const category = t.category || 'Autres';
+      acc[category] = (acc[category] || 0) + Number(t.amount);
       return acc;
     }, {} as Record<string, number>);
 

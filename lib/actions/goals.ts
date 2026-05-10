@@ -95,6 +95,53 @@ export async function addSavings(id: string, amount: number) {
   if (txError) return { error: txError.message };
 
   revalidatePath('/goals');
+  revalidatePath('/goals');
+  revalidatePath('/transactions');
+  revalidatePath('/');
+  return { success: true };
+}
+
+export async function withdrawSavings(id: string, amount: number) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return { error: 'Non authentifié' };
+
+  const { data: goal } = await supabase
+    .from('savings_goals')
+    .select('name, current_amount')
+    .eq('id', id)
+    .eq('owner_id', user.id)
+    .single();
+
+  if (!goal) return { error: 'Objectif non trouvé' };
+
+  if (goal.current_amount < amount) return { error: 'Solde insuffisant dans l\'objectif' };
+
+  // 1. Update goal amount
+  const { error: updateError } = await supabase
+    .from('savings_goals')
+    .update({ current_amount: goal.current_amount - amount })
+    .eq('id', id)
+    .eq('owner_id', user.id);
+
+  if (updateError) return { error: updateError.message };
+
+  // 2. Add as an income transaction
+  const { error: txError } = await supabase
+    .from('transactions')
+    .insert({
+      owner_id: user.id,
+      label: `Retrait épargne: ${goal.name}`,
+      amount: amount,
+      type: 'income',
+      category: 'Économies',
+      date: new Date().toISOString().split('T')[0],
+    });
+
+  if (txError) return { error: txError.message };
+
+  revalidatePath('/goals');
   revalidatePath('/transactions');
   revalidatePath('/');
   return { success: true };
