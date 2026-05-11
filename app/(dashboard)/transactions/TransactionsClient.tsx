@@ -55,10 +55,21 @@ export function TransactionsClient({ initialTransactions, month, year }: { initi
 
   const categories = Array.from(new Set(transactions?.map(t => t.category).filter(Boolean)));
 
+  const [sortBy, setSortBy] = useState<'date' | 'created'>('date');
+  
+  // ... (inside component)
+
   const filtered = transactions.filter(tx => {
     const matchesType = typeFilter === 'all' || tx.type === typeFilter;
     const matchesCategory = categoryFilter === 'all' || tx.category === categoryFilter;
     return matchesType && matchesCategory;
+  }).sort((a, b) => {
+    if (sortBy === 'date') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+    }
+    // Assuming ID can be used for 'created' order (e.g. UUID v7 or time-based) or relying on creation date if it existed.
+    // If no created_at exists, we fallback to ID comparison.
+    return b.id.localeCompare(a.id);
   }) || [];
 
   const monthName = new Date(year, month - 1).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
@@ -111,15 +122,26 @@ export function TransactionsClient({ initialTransactions, month, year }: { initi
                 </Button>
             </div>
         </div>
-        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="h-8 rounded-lg text-[11px] font-bold bg-white border-none shadow-sm">
-                <SelectValue placeholder="Toutes les catégories" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-                <SelectItem value="all">Toutes les catégories</SelectItem>
-                {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
-            </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+            <Select value={sortBy} onValueChange={(val: 'date' | 'created') => setSortBy(val)}>
+                <SelectTrigger className="h-8 rounded-lg text-[11px] font-bold bg-white border-none shadow-sm flex-1">
+                    <SelectValue placeholder="Trier par" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                    <SelectItem value="date">Date de l'opération</SelectItem>
+                    <SelectItem value="created">Derniers ajoutés</SelectItem>
+                </SelectContent>
+            </Select>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="h-8 rounded-lg text-[11px] font-bold bg-white border-none shadow-sm flex-1">
+                    <SelectValue placeholder="Toutes les catégories" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                </SelectContent>
+            </Select>
+        </div>
       </div>
 
       <div className="grid gap-2">

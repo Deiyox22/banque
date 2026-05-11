@@ -12,13 +12,16 @@ import { Loader2 } from 'lucide-react';
 export default function DashboardClient({ initialData, displayName, month, year }: { initialData: any, displayName: string, month: number, year: number }) {
   const { transactions, isLoading, setTransactions, fetchTransactions } = useVaultStore();
 
-  useEffect(() => {
-    if (initialData.transactions && initialData.transactions.length > 0) {
+    useEffect(() => {
+      if (initialData && initialData.transactions) {
         setTransactions(initialData.transactions);
-    } else {
+      } else {
+        // If initialData is not available or empty, fetch transactions for the current month/year.
+        // This fallback should ideally also handle recurring transaction generation if needed,
+        // but for now, we prioritize using server-rendered initialData.
         fetchTransactions(month, year);
-    }
-  }, [month, year, fetchTransactions, initialData, setTransactions]);
+      }
+    }, [month, year, fetchTransactions, initialData, setTransactions]);
 
   const totalIncome = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0) || 0;
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0) || 0;

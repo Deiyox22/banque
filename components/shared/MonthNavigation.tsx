@@ -26,12 +26,28 @@ export default function MonthNavigation({
     });
   };
 
+  const now = new Date();
+  const handleToday = () => {
+    handleNavigate(now.getMonth() + 1, now.getFullYear());
+  };
+
   return (
-    <div className={cn("flex items-center gap-2 transition-opacity", isPending && "opacity-50 pointer-events-none")}>
+    <div className={cn("flex items-center gap-1 transition-opacity", isPending && "opacity-50 pointer-events-none")}>
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="h-8 px-2 text-[10px] uppercase font-black text-primary/60 hover:text-primary mr-2" 
+        onClick={handleToday}
+      >
+        Mois actuel
+      </Button>
+
       <Button variant="ghost" size="icon" onClick={() => handleNavigate(month === 1 ? 12 : month - 1, month === 1 ? year - 1 : year)}>
         <ChevronLeft size={20} />
       </Button>
-      <span className="text-lg font-black capitalize text-primary tracking-tight">{monthName}</span>
+      
+      <span className="text-lg font-black capitalize text-primary tracking-tight min-w-[120px] text-center">{monthName}</span>
+      
       <Button variant="ghost" size="icon" onClick={() => handleNavigate(month === 12 ? 1 : month + 1, month === 12 ? year + 1 : year)}>
         <ChevronRight size={20} />
       </Button>

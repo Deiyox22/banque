@@ -27,7 +27,7 @@ export const useVaultStore = create<VaultStore>()(
       },
       deleteLocalTransaction: (id) => 
         set((state) => ({ 
-          transactions: state.transactions.filter(t => t.id !== id) 
+          transactions: state.transactions.filter(t => !t.id.startsWith(id)) 
         })),
     }),
     {
