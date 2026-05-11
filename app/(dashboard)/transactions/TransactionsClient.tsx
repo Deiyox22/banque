@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2, ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusCircle, MinusCircle, PenLine } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { deleteTransaction } from '@/lib/actions/transactions';
+import { toast } from 'sonner';
 import TransactionModal from '@/components/shared/TransactionModal';
 import MonthNavigation from '@/components/shared/MonthNavigation';
 
