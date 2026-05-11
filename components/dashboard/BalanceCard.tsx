@@ -21,21 +21,21 @@ export default function BalanceCard({ title, amount, type = 'total' }: BalanceCa
   const Icon = icons[type];
 
   return (
-    <Card className="rounded-3xl border-none shadow-soft overflow-hidden transition-all hover:scale-[1.02] hover:shadow-glow/20">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-6">
-        <CardTitle className="text-sm font-black text-primary/80 tracking-tight uppercase">{title}</CardTitle>
+    <Card className="rounded-2xl border border-primary/10 shadow-lg shadow-black/5 overflow-hidden transition-all hover:scale-[1.02] hover:shadow-primary/10 relative bg-secondary/30">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4 pb-1">
+        <CardTitle className="text-[10px] font-black text-rose-500 tracking-widest uppercase">{title}</CardTitle>
         <div className={cn(
-          "rounded-2xl p-2.5",
-          type === 'income' && "bg-emerald-50 text-emerald-500",
-          type === 'expense' && "bg-rose-50 text-rose-500",
-          type === 'total' && "bg-primary/10 text-primary",
-          type === 'savings' && "bg-secondary text-secondary-foreground",
+          "rounded-xl p-2 bg-white shadow-sm",
+          type === 'income' && "text-emerald-600",
+          type === 'expense' && "text-rose-600",
+          type === 'total' && "text-primary",
+          type === 'savings' && "text-secondary-foreground",
         )}>
-          <Icon size={18} strokeWidth={2.5} />
+          <Icon size={14} strokeWidth={3} />
         </div>
       </CardHeader>
-      <CardContent className="px-6 pb-6 pt-0">
-        <div className="text-2xl font-black text-foreground tracking-tighter">
+      <CardContent className="px-4 pb-4 pt-0">
+        <div className="text-xl font-black text-foreground tracking-tighter">
           {formatCurrency(amount)}
         </div>
       </CardContent>

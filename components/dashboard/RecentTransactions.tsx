@@ -53,7 +53,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
           {recent.map((tx) => (
             <div 
               key={tx.id} 
-              className="flex items-center p-3 sm:p-4 rounded-2xl bg-white/60 transition-all border border-primary/5 hover:border-primary/20 hover:shadow-sm group"
+              className="flex items-center p-3 sm:p-4 rounded-2xl bg-white/60 transition-all border-b border-rose-100 last:border-none group"
             >
                 <div className={cn(
                     "h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center shrink-0 mr-3 sm:mr-4 transition-transform group-hover:scale-110",
@@ -74,21 +74,24 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                     {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                 </div>
                 
-                <div className="flex shrink-0 gap-0.5 sm:gap-1">
-                    <TransactionModal mode="icon" transaction={tx} />
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-8 w-8 sm:h-9 sm:w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
-                      onClick={async () => {
-                        if (confirm('Supprimer cette transaction ? 🌸')) {
-                          await deleteTransaction(tx.id);
-                          toast.success('Hop ! Disparue. ✨');
-                        }
-                      }}
-                    >
-                      <Trash2 size={16} />
-                    </Button>
+                <div className="flex flex-col items-end shrink-0 gap-1">
+                    <span className="text-[10px] font-medium text-muted-foreground/60">{new Date(tx.date).toLocaleDateString()}</span>
+                    <div className="flex gap-0.5 sm:gap-1">
+                        <TransactionModal mode="icon" transaction={tx} />
+                        <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 sm:h-9 sm:w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
+                        onClick={async () => {
+                            if (confirm('Supprimer cette transaction ? 🌸')) {
+                            await deleteTransaction(tx.id);
+                            toast.success('Hop ! Disparue. ✨');
+                            }
+                        }}
+                        >
+                        <Trash2 size={16} />
+                        </Button>
+                    </div>
                 </div>
             </div>
           ))}

@@ -12,7 +12,7 @@ interface NavbarProps {
 
 export default function Navbar({ onLoginClick, onRegisterClick }: NavbarProps) {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 border-b border-primary/10 bg-background/60 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-40 border-b border-white/20 bg-white/40 backdrop-blur-2xl shadow-sm">
       <div className="mx-auto max-w-7xl px-6 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground group-hover:shadow-glow transition-all duration-300 group-hover:rotate-6">

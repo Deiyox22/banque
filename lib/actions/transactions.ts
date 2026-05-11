@@ -89,6 +89,8 @@ export async function deleteTransaction(id: string) {
         .single();
     
     if (goal) {
+        // If type is expense (meaning money went into savings), we subtract the amount to "undo" it.
+        // If type is income (meaning money came out of savings), we add the amount to "undo" it.
         const adjustment = tx.type === 'expense' ? -tx.amount : tx.amount;
         await supabase
             .from('savings_goals')
