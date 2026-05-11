@@ -26,22 +26,22 @@ export default function TransactionModal({ mode = 'button', transaction }: Trans
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {mode === 'fab' ? (
-          <button className="fixed bottom-24 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#f472b6] text-[#0d0811] shadow-[0_0_20px_rgba(244,114,182,0.5)] transition-transform hover:scale-110 active:scale-95 md:hidden">
-            <Plus size={28} />
+          <button className="fixed bottom-7 left-1/2 -translate-x-1/2 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition-all hover:scale-110 active:scale-90 md:hidden border-4 border-background">
+            <Plus size={32} strokeWidth={3} />
           </button>
         ) : mode === 'icon' ? (
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:text-[#f472b6]">
-                <PenLine size={16} />
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full">
+                <PenLine size={18} />
             </Button>
         ) : (
-          <Button className="bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90 shadow-[0_0_20px_rgba(244,114,182,0.3)]">
-            {transaction ? 'Modifier' : <><Plus size={20} className="mr-2" />Nouvelle transaction</>}
+          <Button className="bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-soft rounded-full px-6 py-6 transition-all hover:scale-105 active:scale-95">
+            {transaction ? 'Modifier' : <><Plus size={22} className="mr-2" strokeWidth={3} />Nouvelle transaction</>}
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] rounded-3xl border-none shadow-soft">
         <DialogHeader>
-          <DialogTitle>{transaction ? 'Modifier' : 'Ajouter'} une transaction ✨</DialogTitle>
+          <DialogTitle className="text-2xl font-black tracking-tight text-primary">{transaction ? 'Modifier' : 'Ajouter'} une transaction ✨</DialogTitle>
         </DialogHeader>
         <div className="mt-4">
           <TransactionForm initialData={transaction} onSuccess={() => setOpen(false)} />

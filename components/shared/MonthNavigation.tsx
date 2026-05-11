@@ -31,7 +31,7 @@ export default function MonthNavigation({
       <Button variant="ghost" size="icon" onClick={() => handleNavigate(month === 1 ? 12 : month - 1, month === 1 ? year - 1 : year)}>
         <ChevronLeft size={20} />
       </Button>
-      <span className="text-lg font-bold capitalize text-white">{monthName}</span>
+      <span className="text-lg font-black capitalize text-primary tracking-tight">{monthName}</span>
       <Button variant="ghost" size="icon" onClick={() => handleNavigate(month === 12 ? 1 : month + 1, month === 12 ? year + 1 : year)}>
         <ChevronRight size={20} />
       </Button>

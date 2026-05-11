@@ -69,33 +69,34 @@ export default async function DashboardPage({
   const monthName = new Date(year, month - 1).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
 
   return (
-    <div className="space-y-6 pb-20 w-full overflow-hidden">
-      <div className="flex flex-col gap-4 px-1">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#f472b6]">Bonjour {displayName} ! ✨</h1>
+    <div className="space-y-10 pb-32 w-full overflow-hidden px-1">
+      <div className="flex flex-col gap-6 px-1">
+        <div className="space-y-1">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-primary">Coucou {displayName} ! ✨</h1>
+          <p className="text-muted-foreground font-semibold">Prête à gérer ton budget ?</p>
+        </div>
         <MonthNavigation month={month} year={year} monthName={monthName} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <BalanceCard title="Solde" amount={balance} type="total" />
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <BalanceCard title="Mon Solde" amount={balance} type="total" />
         <BalanceCard title="Revenus" amount={totalIncome} type="income" />
         <BalanceCard title="Dépenses" amount={totalExpense} type="expense" />
-        <BalanceCard title="Économies" amount={totalSavings} type="savings" />
+        <BalanceCard title="Épargne" amount={totalSavings} type="savings" />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
-            <Card className="border-[#f472b6]/10 bg-[#13131a]/80 backdrop-blur-sm shadow-xl p-4">
-                <h2 className="text-lg font-bold text-white mb-4">Répartition des dépenses</h2>
+      <div className="grid gap-8 lg:grid-cols-2">
+        <Suspense fallback={<Skeleton className="h-80 w-full rounded-3xl" />}>
+            <Card className="rounded-3xl border-none shadow-soft p-8 bg-white/40 backdrop-blur-sm overflow-hidden">
+                <h2 className="text-xl font-black text-primary mb-6 tracking-tight">Répartition ✨</h2>
                 <SpendingChart transactions={transactions || []} />
             </Card>
         </Suspense>
         
-        <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+        <Suspense fallback={<Skeleton className="h-80 w-full rounded-3xl" />}>
             <RecentTransactions transactions={transactions || []} />
         </Suspense>
       </div>
-
-      <TransactionModal mode="fab" />
     </div>
   );
 }

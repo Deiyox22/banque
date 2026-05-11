@@ -2,7 +2,8 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-const COLORS = ['#f472b6', '#c084fc', '#6366f1', '#38bdf8', '#34d399', '#fbbf24', '#f87171'];
+/* Palette Girly Pastel */
+const COLORS = ['#fbcfe8', '#e9d5ff', '#ddd6fe', '#bae6fd', '#a7f3d0', '#fef3c7', '#fecaca'];
 
 export default function SpendingChart({ transactions }: { transactions: any[] }) {
   // Calculer les données par catégorie
@@ -20,7 +21,7 @@ export default function SpendingChart({ transactions }: { transactions: any[] })
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
-  if (data.length === 0) return <div className="h-48 flex items-center justify-center text-gray-500 text-sm italic">Pas assez de données pour le graphique.</div>;
+  if (data.length === 0) return <div className="h-48 flex items-center justify-center text-muted-foreground text-sm italic">Pas assez de données pour le graphique.</div>;
 
   return (
     <ResponsiveContainer width="100%" height={250}>
@@ -37,8 +38,8 @@ export default function SpendingChart({ transactions }: { transactions: any[] })
         </Pie>
         <Tooltip 
             formatter={(value: number) => [`${value.toFixed(2)} €`, 'Montant']}
-            contentStyle={{ backgroundColor: '#1a1122', border: '1px solid #f472b6/20', borderRadius: '12px' }}
-            itemStyle={{ color: '#fff' }}
+            contentStyle={{ backgroundColor: 'white', border: '1px solid #e5e7eb', borderRadius: '12px' }}
+            itemStyle={{ color: '#0f172a' }}
         />
         <Legend 
             layout="vertical" 
@@ -48,8 +49,8 @@ export default function SpendingChart({ transactions }: { transactions: any[] })
             formatter={(value, entry: any) => {
                 const percent = ((entry.payload.value / total) * 100).toFixed(1);
                 return (
-                    <span className="text-[10px] text-gray-300 ml-1">
-                        {value} : <span className="font-bold">{entry.payload.value.toFixed(0)}€ ({percent}%)</span>
+                    <span className="text-[10px] text-muted-foreground ml-1">
+                        {value} : <span className="font-semibold text-foreground">{entry.payload.value.toFixed(0)}€ ({percent}%)</span>
                     </span>
                 );
             }}

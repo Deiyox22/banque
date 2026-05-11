@@ -3,26 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --background: 280 35% 5%;
-  --foreground: 300 20% 98%;
-  --card: 280 33% 8%;
-  --card-foreground: 300 20% 98%;
-  --popover: 280 33% 8%;
-  --popover-foreground: 300 20% 98%;
-  --primary: 330 81% 70%;
-  --primary-foreground: 330 20% 10%;
-  --secondary: 270 95% 75%;
-  --secondary-foreground: 270 20% 10%;
-  --muted: 280 20% 15%;
-  --muted-foreground: 300 10% 70%;
-  --accent: 330 81% 70%;
-  --accent-foreground: 300 20% 98%;
+  /* Palette Girly : Rose Poudré & Lavande */
+  --background: 330 30% 98%; /* Blanc rosé très doux */
+  --foreground: 330 30% 15%; /* Rose très foncé pour le texte */
+  --card: 0 0% 100%;
+  --card-foreground: 330 30% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 330 30% 15%;
+  --primary: 330 70% 70%; /* Rose Principal plus vif */
+  --primary-foreground: 330 100% 99%;
+  --secondary: 260 50% 90%; /* Lavande Pastel doux */
+  --secondary-foreground: 260 40% 30%;
+  --muted: 330 20% 96%;
+  --muted-foreground: 330 15% 45%;
+  --accent: 330 70% 92%;
+  --accent-foreground: 330 70% 40%;
   --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 280 20% 15%;
-  --input: 280 20% 15%;
-  --ring: 330 81% 70%;
-  --radius: 0.75rem;
+  --destructive-foreground: 0 0% 100%;
+  --border: 330 20% 92%;
+  --input: 330 20% 92%;
+  --ring: 330 70% 70%;
+  --radius: 1.5rem; /* Bords beaucoup plus arrondis */
 }
 
 @layer base {
@@ -30,6 +31,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 }

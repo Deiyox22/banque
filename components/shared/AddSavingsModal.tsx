@@ -19,27 +19,29 @@ export default function AddSavingsModal({ goalId, isOpen, onClose }: { goalId: s
     await addSavings(goalId, parseFloat(amount));
     setIsSubmitting(false);
     onClose();
+    toast.success(`+${amount}€ mis de côté ! Tu te rapproches de ton but. 🌸✨`);
     router.refresh();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="rounded-3xl border-none shadow-soft">
         <DialogHeader>
-          <DialogTitle>Ajouter à l'épargne ✨</DialogTitle>
+          <DialogTitle className="text-2xl font-black text-primary tracking-tight text-center">Ajouter de l'épargne ✨</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label>Montant à ajouter</Label>
+        <div className="space-y-6 mt-4">
+          <div className="space-y-3">
+            <Label className="text-xs font-black uppercase tracking-widest text-primary/60 ml-2">Montant à ajouter</Label>
             <Input 
               type="number" 
               value={amount} 
               onChange={(e) => setAmount(e.target.value)} 
               placeholder="Ex: 50" 
+              className="font-black text-lg"
             />
           </div>
-          <Button onClick={handleAdd} disabled={isSubmitting} className="w-full bg-[#f472b6] text-black font-bold">
-            {isSubmitting ? 'Ajout...' : 'Confirmer l\'ajout'}
+          <Button onClick={handleAdd} disabled={isSubmitting} className="w-full h-16 bg-primary text-primary-foreground font-black text-lg shadow-glow hover:shadow-glow/50 rounded-full transition-all hover:scale-[1.02]">
+            {isSubmitting ? 'Ajout...' : 'Confirmer l\'ajout ✨'}
           </Button>
         </div>
       </DialogContent>

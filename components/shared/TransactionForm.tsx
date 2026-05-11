@@ -10,8 +10,8 @@ import { Label } from '@/components/ui/label';
 import { createTransaction, updateTransaction } from '@/lib/actions/transactions';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PlusCircle, MinusCircle, Tag, Calendar, PenLine, CreditCard, RotateCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
 
 const EXPENSE_CATEGORIES = ['Alimentation', 'Loyer', 'Loisirs', 'Transports', 'Santé', 'Éducation', 'Autres'];
 const INCOME_CATEGORIES = ['Salaire', 'Dividendes', 'Vente', 'Cadeau', 'Autre'];
@@ -19,7 +19,7 @@ const INCOME_CATEGORIES = ['Salaire', 'Dividendes', 'Vente', 'Cadeau', 'Autre'];
 export default function TransactionForm({ onSuccess, initialData }: { onSuccess?: () => void, initialData?: any }) {
   const [error, setError] = useState<string | null>(null);
 
-  const { register, handleSubmit, control, formState: { errors, isSubmitting }, reset, watch } = useForm<any>({
+  const { register, handleSubmit, control, formState: { isSubmitting }, reset, watch } = useForm<any>({
     resolver: zodResolver(transactionSchema),
     defaultValues: initialData || {
       date: new Date().toISOString().split('T')[0],
@@ -34,109 +34,134 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
 
   const onSubmit = async (data: any) => {
     try {
+      // Nettoyage du montant pour accepter point et virgule
+      const cleanAmount = typeof data.amount === 'string' 
+        ? parseFloat(data.amount.replace(',', '.')) 
+        : data.amount;
+      
+      const payload = { ...data, amount: cleanAmount };
+
       if (initialData) {
-        await updateTransaction(initialData.id, data);
+        await updateTransaction(initialData.id, payload);
+        toast.success('Transaction mise à jour avec succès ! ✨');
       } else {
-        await createTransaction(data);
+        await createTransaction(payload);
+        if (data.type === 'income') {
+          toast.success(`Bravo pour ce nouveau revenu de ${cleanAmount}€ ! 🌸`, {
+            description: 'Ton solde te remercie.',
+          });
+        } else {
+          toast.success('Dépense enregistrée. On garde un œil sur le budget ! 🎀');
+        }
       }
       reset();
       if (onSuccess) onSuccess();
     } catch (err: any) {
       setError(err.message);
+      toast.error('Oups ! Une erreur est survenue lors de l\'enregistrement.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {error && <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm">{error}</div>}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      {error && <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-semibold">{error}</div>}
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         <Controller
           name="type"
           control={control}
           render={({ field }) => (
             <Tabs value={field.value} onValueChange={field.onChange} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-black/40 p-1 border border-white/5 h-12">
-                <TabsTrigger value="expense" className="data-[state=active]:bg-rose-500 data-[state=active]:text-white">Dépense</TabsTrigger>
-                <TabsTrigger value="income" className="data-[state=active]:bg-emerald-500 data-[state=active]:text-white">Revenu</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 bg-secondary/50 p-1.5 rounded-2xl h-14">
+                <TabsTrigger value="expense" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black tracking-tight">Dépense</TabsTrigger>
+                <TabsTrigger value="income" className="rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black tracking-tight">Revenu</TabsTrigger>
               </TabsList>
             </Tabs>
           )}
         />
 
         <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label className="text-gray-400">Montant</Label>
-              <Input type="number" {...register('amount')} className="h-12 bg-black/20" placeholder="0.00" />
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Montant</Label>
+              <Input 
+                type="text" 
+                inputMode="decimal"
+                {...register('amount')} 
+                placeholder="0.00" 
+                className="text-lg font-black" 
+                onChange={(e) => {
+                  // Permet la saisie de la virgule en la remplaçant visuellement par un point ou en la laissant passer
+                  // selon la préférence navigateur, mais ici on gère surtout la soumission.
+                }}
+              />
             </div>
-            <div className="space-y-2">
-                <Label className="text-gray-400">Date</Label>
-                <Input type="date" {...register('date')} className="h-12 bg-black/20" />
+            <div className="space-y-3">
+                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Date</Label>
+                <Input type="date" {...register('date')} className="font-semibold" />
             </div>
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-gray-400">Libellé</Label>
-          <Input {...register('label')} className="h-12 bg-black/20" placeholder="Ex: Salaire ou Loyer" />
+        <div className="space-y-3">
+          <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Libellé</Label>
+          <Input {...register('label')} placeholder="Ex: Shopping ou Salaire" className="font-semibold" />
         </div>
 
-        <div className="space-y-2">
-            <Label className="text-gray-400">Catégorie</Label>
+        <div className="space-y-3">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Catégorie</Label>
             <Controller
                 name="category"
                 control={control}
                 render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className="h-12 bg-black/20">
+                        <SelectTrigger className="h-12 bg-background/50 border-primary/20 rounded-2xl font-semibold">
                             <SelectValue placeholder="Sélectionnez une catégorie" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#1a1122]">
-                            {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+                        <SelectContent className="bg-background border-primary/10 rounded-2xl shadow-soft">
+                            {categories.map(cat => <SelectItem key={cat} value={cat} className="rounded-xl focus:bg-primary/10 focus:text-primary">{cat}</SelectItem>)}
                         </SelectContent>
                     </Select>
                 )}
             />
         </div>
 
-        <div className="flex items-center gap-2 pt-2">
-            <input type="checkbox" {...register('is_recurring')} id="is_recurring" className="h-4 w-4" />
-            <Label htmlFor="is_recurring" className="text-sm cursor-pointer">Transaction récurrente</Label>
+        <div className="flex items-center gap-3 p-4 bg-secondary/30 rounded-2xl border border-primary/5">
+            <input type="checkbox" {...register('is_recurring')} id="is_recurring" className="h-5 w-5 rounded-md border-primary/30 text-primary focus:ring-primary/20" />
+            <Label htmlFor="is_recurring" className="text-sm font-bold cursor-pointer text-muted-foreground">Transaction récurrente</Label>
         </div>
 
         {isRecurring && (
-            <div className="space-y-4 p-4 rounded-xl bg-black/20 border border-white/5">
-                <div className="space-y-2">
-                    <Label className="text-gray-400">Fréquence</Label>
+            <div className="space-y-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 animate-in fade-in slide-in-from-top-4">
+                <div className="space-y-3">
+                    <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Fréquence</Label>
                     <Controller
                         name="recurrence_type"
                         control={control}
                         render={({ field }) => (
                             <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger className="h-10 bg-[#1a1122]">
+                                <SelectTrigger className="h-12 bg-background/50 border-primary/20 rounded-2xl">
                                     <SelectValue placeholder="Fréquence" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#1a1122]">
-                                    <SelectItem value="daily">Quotidienne</SelectItem>
-                                    <SelectItem value="weekly">Hebdomadaire</SelectItem>
-                                    <SelectItem value="monthly">Mensuelle</SelectItem>
-                                    <SelectItem value="yearly">Annuelle</SelectItem>
+                                <SelectContent className="bg-background border-primary/10 rounded-2xl">
+                                    <SelectItem value="daily" className="rounded-xl">Quotidienne</SelectItem>
+                                    <SelectItem value="weekly" className="rounded-xl">Hebdomadaire</SelectItem>
+                                    <SelectItem value="monthly" className="rounded-xl">Mensuelle</SelectItem>
+                                    <SelectItem value="yearly" className="rounded-xl">Annuelle</SelectItem>
                                 </SelectContent>
                             </Select>
                         )}
                     />
                 </div>
-                <div className="space-y-2">
-                    <Label className="text-gray-400">Date de fin (Optionnel)</Label>
-                    <Input type="date" {...register('recurrence_end_date')} className="h-10 bg-[#1a1122]" />
+                <div className="space-y-3">
+                    <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Date de fin</Label>
+                    <Input type="date" {...register('recurrence_end_date')} />
                 </div>
             </div>
         )}
       </div>
 
-      <Button type="submit" disabled={isSubmitting} className="w-full h-14 bg-[#f472b6] text-black font-bold">
-        {isSubmitting ? 'Enregistrement...' : 'Confirmer'}
+      <Button type="submit" disabled={isSubmitting} className="w-full h-16 bg-primary text-primary-foreground font-black text-lg shadow-glow hover:shadow-glow/50 rounded-full transition-all hover:scale-[1.02] active:scale-95">
+        {isSubmitting ? 'Enregistrement...' : 'Confirmer ✨'}
       </Button>
     </form>
   );
 }
-

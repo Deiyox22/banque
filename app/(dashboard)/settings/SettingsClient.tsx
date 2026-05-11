@@ -26,39 +26,48 @@ export default function SettingsClient({ displayName }: { displayName: string })
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold text-white">Paramètres</h1>
+    <div className="p-1 sm:p-6 space-y-12 pb-32">
+      <div className="space-y-1">
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-primary">Réglages ✨</h1>
+        <p className="text-muted-foreground font-semibold italic">Personnalise ton expérience VAULT.</p>
+      </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-2">
         {/* Profil */}
-        <Card className="bg-[#1a1122] border-[#f472b6]/20">
-          <CardHeader>
-            <CardTitle className="text-white">Profil</CardTitle>
-            <CardDescription className="text-gray-400">Gérez votre nom d'affichage.</CardDescription>
+        <Card className="rounded-3xl border-none shadow-soft bg-white/40 backdrop-blur-sm overflow-hidden p-4">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-2xl font-black text-primary tracking-tight">Profil 🌸</CardTitle>
+            <CardDescription className="text-muted-foreground/80 font-bold">Gère ton nom d'affichage.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-white" htmlFor="name">Nom</Label>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <Label className="text-xs font-black uppercase tracking-widest text-primary/60 ml-2" htmlFor="name">Ton petit nom</Label>
               <Input 
                 id="name" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)}
-                className="bg-[#2a1b35] border-[#f472b6]/20 text-white" 
+                className="h-14 bg-white/50 rounded-2xl font-bold" 
               />
             </div>
-            <Button className="bg-[#f472b6] hover:bg-[#f472b6]/90 text-white">Enregistrer</Button>
+            <Button className="w-full h-14 bg-primary text-primary-foreground font-black text-lg shadow-glow hover:shadow-glow/50 rounded-full transition-all hover:scale-[1.02]">
+              Enregistrer ✨
+            </Button>
           </CardContent>
         </Card>
 
         {/* Compte */}
-        <Card className="bg-[#1a1122] border-[#f472b6]/20">
-          <CardHeader>
-            <CardTitle className="text-white">Compte</CardTitle>
-            <CardDescription className="text-gray-400">Actions sur votre compte.</CardDescription>
+        <Card className="rounded-3xl border-none shadow-soft bg-white/40 backdrop-blur-sm overflow-hidden p-4">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-2xl font-black text-primary tracking-tight">Compte 🔒</CardTitle>
+            <CardDescription className="text-muted-foreground/80 font-bold">Sécurité et déconnexion.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button variant="outline" className="w-full" onClick={handleLogout}>Déconnexion</Button>
-            <Button variant="destructive" className="w-full" onClick={handleDelete}>Supprimer mon compte</Button>
+            <Button variant="outline" className="w-full h-14 border-primary/20 bg-white/40 text-primary font-black rounded-full shadow-soft hover:bg-white/60 transition-all" onClick={handleLogout}>
+              Déconnexion
+            </Button>
+            <Button variant="ghost" className="w-full h-14 text-destructive font-black hover:bg-destructive/5 rounded-full transition-all mt-4" onClick={handleDelete}>
+              Supprimer mon compte
+            </Button>
           </CardContent>
         </Card>
       </div>

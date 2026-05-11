@@ -57,51 +57,51 @@ export default function InstallPrompt() {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300 md:bottom-6 md:left-auto md:right-6 md:w-96">
-      <div className="overflow-hidden rounded-2xl border border-[#f472b6]/20 bg-[#1a1122] shadow-2xl">
-        <div className="p-4">
+    <div className="fixed bottom-24 left-4 right-4 z-50 animate-in fade-in slide-in-from-bottom-6 duration-500 md:bottom-8 md:left-auto md:right-8 md:w-96">
+      <div className="overflow-hidden rounded-[2.5rem] border-none bg-background/80 backdrop-blur-xl shadow-glow p-2">
+        <div className="p-5">
           <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f472b6]/10 text-[#f472b6]">
-                <span className="text-xl font-bold italic">V</span>
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm group-hover:rotate-6 transition-transform">
+                <span className="text-2xl font-black italic">V</span>
               </div>
               <div>
-                <h3 className="font-bold text-white">Installer VAULT</h3>
-                <p className="text-sm text-gray-400">
-                  Accédez à votre budget instantanément.
+                <h3 className="text-lg font-black text-primary tracking-tight leading-tight">Installer VAULT ✨</h3>
+                <p className="text-xs font-bold text-muted-foreground/70">
+                  Accède à ton budget en un clic !
                 </p>
               </div>
             </div>
             <button
               onClick={handleDismiss}
-              className="rounded-full p-1 text-gray-500 hover:bg-white/10 hover:text-white"
+              className="rounded-full p-2 text-primary/40 hover:bg-primary/10 hover:text-primary transition-all"
             >
-              <X size={20} />
+              <X size={20} strokeWidth={3} />
             </button>
           </div>
 
-          <div className="mt-4 flex gap-2">
+          <div className="mt-6 flex gap-3">
             {isIOS ? (
-              <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#f472b6]/10 p-3 text-xs text-[#f472b6]">
-                <Share size={16} />
-                <span>
-                  Appuyez sur <span className="font-bold">Partager</span> puis{' '}
-                  <span className="font-bold">Sur l'écran d'accueil</span>
+              <div className="flex w-full items-center justify-center gap-2 rounded-2xl bg-secondary/50 p-4 text-[10px] sm:text-xs font-black uppercase tracking-widest text-primary/70 border border-primary/5">
+                <Share size={18} strokeWidth={3} />
+                <span className="leading-relaxed">
+                  Appuie sur <span className="text-primary underline">Partager</span> puis{' '}
+                  <span className="text-primary underline">Sur l'écran d'accueil</span> 🌸
                 </span>
               </div>
             ) : (
               <>
                 <Button
                   onClick={handleInstall}
-                  className="flex-1 bg-[#f472b6] text-black font-bold hover:bg-[#f472b6]/90 rounded-xl"
+                  className="flex-1 h-14 bg-primary text-primary-foreground font-black text-base shadow-glow hover:shadow-glow/50 rounded-full transition-all hover:scale-105 active:scale-95"
                 >
-                  <Download size={18} className="mr-2" />
-                  Installer
+                  <Download size={20} className="mr-2" strokeWidth={3} />
+                  Installer ✨
                 </Button>
                 <Button
                   variant="ghost"
                   onClick={handleDismiss}
-                  className="text-gray-400 hover:text-white"
+                  className="h-14 px-6 text-primary/40 font-black hover:text-primary hover:bg-primary/5 rounded-full"
                 >
                   Plus tard
                 </Button>

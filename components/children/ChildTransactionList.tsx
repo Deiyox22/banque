@@ -18,29 +18,29 @@ interface ChildTransactionListProps {
 
 export default function ChildTransactionList({ transactions }: ChildTransactionListProps) {
   return (
-    <Card className="border-[#6366f1]/10 bg-[#13131a]">
-      <CardHeader>
-        <CardTitle className="text-sm font-medium text-gray-400">Transactions</CardTitle>
+    <Card className="rounded-3xl border-none shadow-soft overflow-hidden bg-white/40 backdrop-blur-sm">
+      <CardHeader className="p-6 pb-2">
+        <CardTitle className="text-xs font-black uppercase tracking-widest text-primary/60">Journal des transactions ✨</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 pt-0">
         <div className="space-y-4">
           {transactions.map((tx) => (
-            <div key={tx.id} className="flex items-center justify-between border-b border-white/5 pb-3 last:border-0 last:pb-0">
-              <div className="flex flex-col">
-                <span className="font-medium text-white">{tx.label}</span>
-                <span className="text-xs text-gray-500">{new Date(tx.date).toLocaleDateString()}</span>
+            <div key={tx.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/50 border border-primary/5 transition-all hover:border-primary/20 group">
+              <div className="flex flex-col min-w-0 mr-3">
+                <span className="font-bold text-foreground text-sm leading-tight tracking-tight break-words">{tx.label}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary/40 mt-1">{new Date(tx.date).toLocaleDateString()}</span>
               </div>
               <div className={cn(
-                "font-mono font-bold",
-                tx.type === 'income' ? "text-green-400" : "text-red-400"
+                "font-black text-sm sm:text-base shrink-0 tracking-tighter",
+                tx.type === 'income' ? "text-emerald-500" : "text-rose-500"
               )}>
                 {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
               </div>
             </div>
           ))}
           {transactions.length === 0 && (
-            <div className="py-8 text-center text-sm text-gray-500">
-              Aucune transaction pour le moment.
+            <div className="py-12 text-center text-sm font-bold text-muted-foreground/60 italic">
+              Aucune transaction pour le moment. 🌸
             </div>
           )}
         </div>

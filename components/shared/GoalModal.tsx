@@ -24,32 +24,35 @@ export default function GoalModal() {
     await createGoal(data);
     reset();
     setOpen(false);
+    toast.success(`C'est parti pour l'objectif "${data.name}" ! 🚀`, {
+      description: 'Chaque petit pas compte pour réaliser ses rêves.',
+    });
     router.refresh();
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#f472b6] text-[#0d0811] font-bold hover:bg-[#f472b6]/90">
-          <Plus size={20} className="mr-2" />
+        <Button className="bg-primary text-primary-foreground font-black shadow-soft hover:shadow-glow/50 rounded-full px-6 py-6 transition-all hover:scale-105">
+          <Plus size={22} className="mr-2" strokeWidth={3} />
           Nouvel objectif
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="rounded-3xl border-none shadow-soft">
         <DialogHeader>
-          <DialogTitle>Nouvel objectif ✨</DialogTitle>
+          <DialogTitle className="text-2xl font-black text-primary tracking-tight">Nouvel objectif ✨</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <Label>Nom de l'objectif</Label>
-            <Input {...register('name')} placeholder="Ex: Vacances" />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
+          <div className="space-y-3">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Nom de l'objectif</Label>
+            <Input {...register('name')} placeholder="Ex: Voyage à Tokyo ✈️" className="font-bold" />
           </div>
-          <div className="space-y-2">
-            <Label>Montant cible</Label>
-            <Input type="number" {...register('target_amount')} placeholder="0" />
+          <div className="space-y-3">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Montant cible</Label>
+            <Input type="number" {...register('target_amount')} placeholder="0" className="text-lg font-black" />
           </div>
-          <Button type="submit" disabled={isSubmitting} className="w-full bg-[#f472b6] text-black font-bold">
-            {isSubmitting ? 'Création...' : 'Créer'}
+          <Button type="submit" disabled={isSubmitting} className="w-full h-16 bg-primary text-primary-foreground font-black text-lg shadow-glow hover:shadow-glow/50 rounded-full transition-all hover:scale-[1.02] active:scale-95 mt-4">
+            {isSubmitting ? 'Création...' : 'Créer l\'objectif ✨'}
           </Button>
         </form>
       </DialogContent>

@@ -1,19 +1,15 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Outfit } from 'next/font/google';
 import { ViewTransitions } from 'next-view-transitions';
 import './globals.css';
 import PWARegister from '@/components/shared/PWARegister';
 import InstallPrompt from '@/components/shared/InstallPrompt';
+import { Toaster } from 'sonner';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const outfit = Outfit({
   subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -22,13 +18,13 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'black-translucent',
+    statusBarStyle: 'default',
     title: 'VAULT',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#6366f1',
+  themeColor: '#fce7f3', /* Rose pastel */
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -42,13 +38,14 @@ export default function RootLayout({
 }>) {
   return (
     <ViewTransitions>
-      <html lang="fr" className="dark">
+      <html lang="fr">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a0a0f] text-white`}
+          className={`${outfit.className} antialiased bg-background text-foreground`}
         >
           <PWARegister />
           <main>{children}</main>
           <InstallPrompt />
+          <Toaster position="top-center" expand={true} richColors />
         </body>
       </html>
     </ViewTransitions>
