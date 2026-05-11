@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   title: 'VAULT — Budget Familial',
   description: 'Gérez votre budget familial simplement.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icons/icon-192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
