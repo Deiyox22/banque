@@ -6,6 +6,7 @@ import './globals.css';
 import PWARegister from '@/components/shared/PWARegister';
 import InstallPrompt from '@/components/shared/InstallPrompt';
 import { Toaster } from 'sonner';
+import QueryProvider from '@/lib/providers/query-provider';
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -42,10 +43,12 @@ export default function RootLayout({
         <body
           className={`${outfit.className} antialiased bg-background text-foreground`}
         >
-          <PWARegister />
-          <main>{children}</main>
-          <InstallPrompt />
-          <Toaster position="top-center" expand={true} richColors />
+          <QueryProvider>
+            <PWARegister />
+            <main>{children}</main>
+            <InstallPrompt />
+            <Toaster position="top-center" expand={true} richColors />
+          </QueryProvider>
         </body>
       </html>
     </ViewTransitions>

@@ -1,12 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
-import BalanceCard from '@/components/dashboard/BalanceCard';
-import { Card } from '@/components/ui/card';
-import SpendingChart from '@/components/dashboard/SpendingChart';
-import RecentTransactions from '@/components/dashboard/RecentTransactions';
-import TransactionModal from '@/components/shared/TransactionModal';
-import MonthNavigation from '@/components/shared/MonthNavigation';
-import { Suspense } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { getDashboardData } from '@/lib/data/dashboard';
+import DashboardClient from './DashboardClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,11 +17,6 @@ export default async function DashboardPage({
   const month = parseInt(awaitedSearchParams.month || (now.getMonth() + 1).toString());
   const year = parseInt(awaitedSearchParams.year || now.getFullYear().toString());
 
-  const firstDay = `${year}-${String(month).padStart(2, '0')}-01`;
-  const lastDay = month === 12 
-    ? `${year + 1}-01-01` 
-    : `${year}-${String(month + 1).padStart(2, '0')}-01`;
-
   // Fetch user profile
   const { data: profile } = await supabase
     .from('profiles')
@@ -37,66 +26,7 @@ export default async function DashboardPage({
 
   const displayName = profile?.display_name || 'Utilisateur';
 
-  // Fetching data for current month
-  const { data: rawTransactions } = await supabase
-    .from('transactions')
-    .select('*')
-    .eq('owner_id', user!.id);
+  const initialData = await getDashboardData(user!.id, month, year);
 
-  // Logic to filter and expand recurring transactions
-  const selectedDate = new Date(year, month - 1);
-  const transactions = rawTransactions?.filter(tx => {
-    if (!tx.is_recurring) {
-        const txDate = new Date(tx.date);
-        return txDate >= new Date(firstDay) && txDate < new Date(lastDay);
-    }
-    // For recurring: check if start date <= period end and (no end date or end date >= period start)
-    const startDate = new Date(tx.date);
-    const endDate = tx.recurrence_end_date ? new Date(tx.recurrence_end_date) : null;
-    return startDate < new Date(lastDay) && (!endDate || endDate >= new Date(firstDay));
-  }) || [];
-
-  const { data: goals } = await supabase
-    .from('savings_goals')
-    .select('*')
-    .eq('owner_id', user!.id);
-
-  const totalIncome = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0) || 0;
-  const totalExpense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0) || 0;
-  const balance = totalIncome - totalExpense;
-  const totalSavings = goals?.reduce((acc, g) => acc + Number(g.current_amount), 0) || 0;
-
-  const monthName = new Date(year, month - 1).toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
-
-  return (
-    <div className="space-y-4 pb-24 w-full overflow-hidden px-1">
-      <div className="flex flex-col gap-2 px-1">
-        <div className="space-y-0">
-          <h1 className="text-2xl sm:text-4xl font-black tracking-tighter text-primary">Coucou {displayName} ! ✨</h1>
-          <p className="text-muted-foreground font-semibold text-xs">Prête à gérer ton budget ?</p>
-        </div>
-        <MonthNavigation month={month} year={year} monthName={monthName} />
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <BalanceCard title="Mon Solde" amount={balance} type="total" />
-        <BalanceCard title="Revenus" amount={totalIncome} type="income" />
-        <BalanceCard title="Dépenses" amount={totalExpense} type="expense" />
-        <BalanceCard title="Épargne" amount={totalSavings} type="savings" />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Suspense fallback={<Skeleton className="h-80 w-full rounded-3xl" />}>
-            <Card className="rounded-3xl border-none shadow-soft p-4 bg-white/40 backdrop-blur-sm overflow-hidden">
-                <h2 className="text-sm font-black text-primary mb-2 tracking-tight">Répartition ✨</h2>
-                <SpendingChart transactions={transactions || []} />
-            </Card>
-        </Suspense>
-        
-        <Suspense fallback={<Skeleton className="h-80 w-full rounded-3xl" />}>
-            <RecentTransactions transactions={transactions || []} />
-        </Suspense>
-      </div>
-    </div>
-  );
+  return <DashboardClient initialData={initialData} displayName={displayName} month={month} year={year} />;
 }

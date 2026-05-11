@@ -8,7 +8,10 @@ import { ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusC
 import TransactionModal from '@/components/shared/TransactionModal';
 import { Button } from '@/components/ui/button';
 import { deleteTransaction } from '@/lib/actions/transactions';
+import { useVaultStore } from '@/store/useVaultStore';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import DeleteConfirmationModal from '@/components/shared/DeleteConfirmationModal';
 
 interface Transaction {
   id: string;
@@ -39,12 +42,26 @@ const getCategoryIcon = (category: string, type: 'income' | 'expense') => {
 };
 
 export default function RecentTransactions({ transactions }: RecentTransactionsProps) {
+  const deleteLocalTransaction = useVaultStore((state) => state.deleteLocalTransaction);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  
   const recent = [...transactions]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 
+  const handleDelete = async (id: string) => {
+      deleteLocalTransaction(id);
+      await deleteTransaction(id);
+      toast.success('Hop ! Disparue. ✨');
+  };
+
   return (
     <Card className="rounded-3xl border-none shadow-soft overflow-hidden bg-white/30 backdrop-blur-md">
+      <DeleteConfirmationModal 
+        isOpen={!!deleteId} 
+        onClose={() => setDeleteId(null)} 
+        onConfirm={() => deleteId && handleDelete(deleteId)} 
+      />
       <CardHeader className="flex flex-row items-center justify-between p-5 sm:p-6 pb-2">
         <CardTitle className="text-xl font-black text-primary tracking-tight">Activités</CardTitle>
       </CardHeader>
@@ -82,12 +99,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8 sm:h-9 sm:w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full"
-                        onClick={async () => {
-                            if (confirm('Supprimer cette transaction ? 🌸')) {
-                            await deleteTransaction(tx.id);
-                            toast.success('Hop ! Disparue. ✨');
-                            }
-                        }}
+                        onClick={() => setDeleteId(tx.id)}
                         >
                         <Trash2 size={16} />
                         </Button>

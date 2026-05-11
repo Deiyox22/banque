@@ -47,11 +47,13 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
       } else {
         await createTransaction(payload);
         if (data.type === 'income') {
-          toast.success(`Bravo pour ce nouveau revenu de ${cleanAmount}€ ! 🌸`, {
-            description: 'Ton solde te remercie.',
+          toast.success(`Revenu de ${cleanAmount}€ ajouté ✨`, {
+            description: `${data.label} le ${new Date(data.date).toLocaleDateString()}`,
           });
         } else {
-          toast.success('Dépense enregistrée. On garde un œil sur le budget ! 🎀');
+          toast.success(`Dépense de ${cleanAmount}€ ajoutée 🎀`, {
+            description: `${data.label} le ${new Date(data.date).toLocaleDateString()}`,
+          });
         }
       }
       reset();

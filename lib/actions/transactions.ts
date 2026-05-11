@@ -89,9 +89,9 @@ export async function deleteTransaction(id: string) {
         .single();
     
     if (goal) {
-        // If type is expense (meaning money went into savings), we subtract the amount to "undo" it.
-        // If type is income (meaning money came out of savings), we add the amount to "undo" it.
-        const adjustment = tx.type === 'expense' ? -tx.amount : tx.amount;
+        // Si c'est une dépense (Épargne ajoutée), on doit soustraire de l'objectif (car on annule l'ajout).
+        // Si c'est un revenu (Retrait épargne), on doit ajouter à l'objectif (car on annule le retrait).
+        const adjustment = tx.type === 'expense' ? tx.amount : -tx.amount;
         await supabase
             .from('savings_goals')
             .update({ current_amount: goal.current_amount - adjustment })
@@ -107,7 +107,7 @@ export async function deleteTransaction(id: string) {
 
   if (error) throw new Error(error.message);
 
-  revalidatePath('/transactions');
-  revalidatePath('/goals');
-  revalidatePath('/');
+  // revalidatePath('/transactions');
+  // revalidatePath('/goals');
+  // revalidatePath('/');
 }
