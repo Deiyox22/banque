@@ -10,6 +10,7 @@ import { savingsGoalSchema } from '@/lib/validations/schemas';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createGoal } from '@/lib/actions/goals';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
 export default function GoalModal() {

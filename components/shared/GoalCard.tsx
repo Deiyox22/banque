@@ -5,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
 import WithdrawModal from './WithdrawModal';
+import { toast } from 'sonner';
 import { deleteGoal } from '@/lib/actions/goals';
 
 interface GoalCardProps {
