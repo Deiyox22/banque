@@ -9,15 +9,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createTransaction, updateTransaction } from '@/lib/actions/transactions';
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { useVaultStore } from '@/store/useVaultStore';
 
 const EXPENSE_CATEGORIES = ['Alimentation', 'Loyer', 'Loisirs', 'Transports', 'Santé', 'Éducation', 'Autres'];
 const INCOME_CATEGORIES = ['Salaire', 'Dividendes', 'Vente', 'Cadeau', 'Autre'];
 
 export default function TransactionForm({ onSuccess, initialData }: { onSuccess?: () => void, initialData?: any }) {
   const [error, setError] = useState<string | null>(null);
+  const transactions = useVaultStore((state) => state.transactions);
+  const setTransactions = useVaultStore((state) => state.setTransactions);
+  const fetchTransactions = useVaultStore((state) => state.fetchTransactions);
 
   const { register, handleSubmit, control, formState: { isSubmitting }, reset, watch } = useForm<any>({
     resolver: zodResolver(transactionSchema),
@@ -33,39 +38,40 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
   const categories = type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
   const onSubmit = async (data: any) => {
+    console.log('onSubmit déclenché avec:', data);
     try {
-      // Nettoyage du montant pour accepter point et virgule
-      const cleanAmount = typeof data.amount === 'string' 
-        ? parseFloat(data.amount.replace(',', '.')) 
-        : data.amount;
-      
-      const payload = { ...data, amount: cleanAmount };
-
       if (initialData) {
-        await updateTransaction(initialData.id, payload);
+        console.log('Tentative de mise à jour:', initialData.id, data);
+        const result = await updateTransaction(initialData.id, data);
+        console.log('Résultat mise à jour:', result);
+        
+        // Mise à jour locale du store
+        setTransactions(transactions.map(t => t.id === initialData.id ? { ...t, ...data } : t));
         toast.success('Transaction mise à jour avec succès ! ✨');
       } else {
-        await createTransaction(payload);
-        if (data.type === 'income') {
-          toast.success(`Revenu de ${cleanAmount}€ ajouté ✨`, {
-            description: `${data.label} le ${new Date(data.date).toLocaleDateString()}`,
-          });
-        } else {
-          toast.success(`Dépense de ${cleanAmount}€ ajoutée 🎀`, {
-            description: `${data.label} le ${new Date(data.date).toLocaleDateString()}`,
-          });
-        }
+        await createTransaction(data);
+        // On rafraîchit les données depuis le serveur pour avoir les nouveaux ID
+        fetchTransactions(new Date().getMonth() + 1, new Date().getFullYear());
+        toast.success(`Transaction de ${data.amount}€ ajoutée ✨`, {
+          description: `${data.label} le ${new Date(data.date).toLocaleDateString()}`,
+        });
       }
       reset();
       if (onSuccess) onSuccess();
     } catch (err: any) {
+      console.error('Erreur soumission:', err);
       setError(err.message);
       toast.error('Oups ! Une erreur est survenue lors de l\'enregistrement.');
     }
   };
 
+  const onInvalid = (errors: any) => {
+    console.log('Validation formulaire échouée:', errors);
+    setError('Veuillez vérifier les champs du formulaire.');
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-8 p-6 bg-white/40 backdrop-blur-md rounded-3xl border border-white/50 shadow-soft">
       {error && <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-semibold">{error}</div>}
 
       <div className="space-y-6">
@@ -126,39 +132,35 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
             />
         </div>
 
-        <div className="flex items-center gap-3 p-4 bg-secondary/30 rounded-2xl border border-primary/5">
-            <input type="checkbox" {...register('is_recurring')} id="is_recurring" className="h-5 w-5 rounded-md border-primary/30 text-primary focus:ring-primary/20" />
-            <Label htmlFor="is_recurring" className="text-sm font-bold cursor-pointer text-muted-foreground">Transaction récurrente</Label>
-        </div>
-
-        {isRecurring && (
-            <div className="space-y-6 p-6 rounded-3xl bg-secondary/20 border border-primary/10 animate-in fade-in slide-in-from-top-4">
+        <div className="space-y-4 p-4 bg-secondary/20 rounded-2xl border border-primary/5">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70">Récurrence (optionnel)</Label>
+            <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-3">
-                    <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Fréquence</Label>
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Fréquence</Label>
                     <Controller
                         name="recurrence_type"
                         control={control}
                         render={({ field }) => (
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger className="h-12 bg-background/50 border-primary/20 rounded-2xl">
-                                    <SelectValue placeholder="Fréquence" />
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                                <SelectTrigger className="h-10 bg-background/50 border-primary/20 rounded-xl">
+                                    <SelectValue placeholder="Aucune" />
                                 </SelectTrigger>
                                 <SelectContent className="bg-background border-primary/10 rounded-2xl">
-                                    <SelectItem value="daily" className="rounded-xl">Quotidienne</SelectItem>
-                                    <SelectItem value="weekly" className="rounded-xl">Hebdomadaire</SelectItem>
-                                    <SelectItem value="monthly" className="rounded-xl">Mensuelle</SelectItem>
-                                    <SelectItem value="yearly" className="rounded-xl">Annuelle</SelectItem>
+                                    <SelectItem value="daily" className="rounded-xl">Jour</SelectItem>
+                                    <SelectItem value="weekly" className="rounded-xl">Semaine</SelectItem>
+                                    <SelectItem value="monthly" className="rounded-xl">Mois</SelectItem>
+                                    <SelectItem value="yearly" className="rounded-xl">An</SelectItem>
                                 </SelectContent>
                             </Select>
                         )}
                     />
                 </div>
                 <div className="space-y-3">
-                    <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/70 ml-2">Date de fin</Label>
-                    <Input type="date" {...register('recurrence_end_date')} />
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">Fin (optionnel)</Label>
+                    <Input type="date" {...register('recurrence_end_date')} className="h-10 rounded-xl bg-background/50 border-primary/20" />
                 </div>
             </div>
-        )}
+        </div>
       </div>
 
       <Button type="submit" disabled={isSubmitting} className="w-full h-16 bg-primary text-primary-foreground font-black text-lg shadow-glow hover:shadow-glow/50 rounded-full transition-all hover:scale-[1.02] active:scale-95">

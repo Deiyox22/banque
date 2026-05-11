@@ -26,17 +26,17 @@ export default function Navbar({ onLoginClick, onRegisterClick }: NavbarProps) {
           <a href="#security" className="text-sm font-bold text-muted-foreground hover:text-primary transition-all">Sécurité</a>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <Button 
             variant="ghost" 
             onClick={onLoginClick}
-            className="text-primary font-bold hover:bg-primary/10 rounded-full px-6"
+            className="text-primary font-bold hover:bg-primary/10 rounded-full px-3 sm:px-6 text-xs sm:text-sm"
           >
-            Se connecter
+            Connexion
           </Button>
           <Button 
             onClick={onRegisterClick}
-            className="bg-primary text-primary-foreground font-black shadow-glow hover:shadow-glow/50 rounded-full px-8 py-6 transition-all hover:scale-105 active:scale-95"
+            className="bg-primary text-primary-foreground font-black shadow-glow hover:shadow-glow/50 rounded-full px-4 sm:px-8 py-5 text-xs sm:text-sm transition-all hover:scale-105 active:scale-95"
           >
             Démarrer
           </Button>

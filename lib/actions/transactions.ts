@@ -47,6 +47,7 @@ export async function updateTransaction(id: string, formData: any) {
   const validatedFields = transactionSchema.safeParse(formData);
 
   if (!validatedFields.success) {
+    console.error('Validation échouée:', validatedFields.error);
     return { error: validatedFields.error.flatten().fieldErrors };
   }
 
@@ -56,10 +57,13 @@ export async function updateTransaction(id: string, formData: any) {
     .eq('id', id)
     .eq('owner_id', user.id);
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error('Erreur Supabase:', error);
+    throw new Error(error.message);
+  }
 
-  revalidatePath('/transactions');
-  revalidatePath('/');
+  // revalidatePath('/transactions');
+  // revalidatePath('/');
 }
 
 export async function deleteTransaction(id: string) {

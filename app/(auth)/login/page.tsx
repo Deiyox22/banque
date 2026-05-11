@@ -7,11 +7,10 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sparkles, ShieldCheck, Heart, Baby, Target, ArrowRight, Wallet } from 'lucide-react';
-import Navbar from '@/components/shared/Navbar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Sparkles, ShieldCheck, Target, ArrowRight, Wallet, TrendingUp, CalendarDays } from 'lucide-react';
+import Navbar from '@/components/shared/Navbar';
 
 export default function LandingAuthPage() {
   const [email, setEmail] = useState('');
@@ -45,7 +44,6 @@ export default function LandingAuthPage() {
     });
     if (error) { alert(error.message); setLoading(false); }
     else {
-      // Create profile record
       if (data.user) {
         await supabase.from('profiles').insert({
           id: data.user.id,
@@ -53,7 +51,7 @@ export default function LandingAuthPage() {
           avatar_color: '#f472b6'
         });
       }
-      alert('Inscription réussie ! Vérifiez vos emails.');
+      alert('Inscription réussie !');
       setLoading(false);
       setIsAuthOpen(false);
     }
@@ -63,144 +61,83 @@ export default function LandingAuthPage() {
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
       <Navbar onLoginClick={openLogin} onRegisterClick={openRegister} />
 
-      {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/30 rounded-full blur-[120px]" />
       </div>
 
-      {/* Hero Section */}
-      <div className="relative z-10 mx-auto max-w-7xl px-6 pt-32 pb-16 text-center lg:pt-48">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/50 backdrop-blur-md px-5 py-2 text-sm font-bold text-primary mb-10 animate-in fade-in slide-in-from-top-4 duration-1000 shadow-soft">
-          <Sparkles size={16} strokeWidth={3} />
-          <span>L'application budget préférée des familles</span>
+      <div className="relative z-10 mx-auto max-w-4xl px-6 pt-24 pb-16 text-center">
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/50 backdrop-blur-md px-5 py-2 text-xs font-black text-primary mb-8 shadow-soft">
+          <Sparkles size={14} strokeWidth={3} />
+          <span>L'APP BUDGÉTAIRE TOUT-EN-UN</span>
         </div>
-        <h1 className="text-5xl font-black tracking-tighter sm:text-8xl mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 text-primary">
-          Gérez votre argent avec <br />
-          <span className="italic text-accent-foreground drop-shadow-sm font-black">élégance & clarté.</span>
+        <h1 className="text-5xl font-black tracking-tighter sm:text-7xl mb-6 text-primary">
+          VAULT — <span className="italic text-rose-500">Votre</span><br />
+          Budget, Maîtrisé.
         </h1>
-        <p className="mx-auto max-w-2xl text-lg font-bold text-muted-foreground/80 mb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
-          VAULT est l'outil tout-en-un pour suivre vos dépenses, épargner pour vos rêves et apprendre la gestion financière à vos enfants dans un univers sécurisé et stylé.
+        <p className="mx-auto max-w-lg text-sm font-bold text-muted-foreground/80 mb-10 leading-relaxed">
+          Suivez vos revenus, contrôlez vos dépenses et atteignez vos objectifs d'épargne avec élégance, partout, tout le temps.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-24 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
-          <Button 
-            size="lg" 
-            onClick={openRegister}
-            className="h-16 px-10 bg-primary text-primary-foreground font-black text-xl shadow-glow hover:shadow-glow/50 rounded-full transition-all hover:scale-105"
-          >
-            Démarrer Gratuitement ✨
-            <ArrowRight size={22} className="ml-2" strokeWidth={3} />
+        <div className="flex flex-col gap-3 mb-16">
+          <Button size="lg" onClick={openRegister} className="h-14 bg-primary text-primary-foreground font-black rounded-2xl shadow-glow transition-all hover:scale-[1.02]">
+            Démarrer Gratuitement
           </Button>
-          <Button 
-            variant="outline" 
-            size="lg" 
-            onClick={openLogin}
-            className="h-16 px-10 border-primary/20 bg-white/40 backdrop-blur-sm hover:bg-white/60 text-primary font-black text-lg rounded-full shadow-soft transition-all"
-          >
-            Déjà membre ?
+          <Button variant="outline" size="lg" onClick={openLogin} className="h-14 border-primary/20 bg-white/40 font-black rounded-2xl">
+            Se connecter
           </Button>
         </div>
 
-        {/* Features Grid */}
-        <div id="features" className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24 pt-24">
+        <div className="grid grid-cols-1 gap-4 text-left">
           {[
-            { icon: ShieldCheck, title: "Sécurité Totale", desc: "Vos données sont protégées par Supabase et cryptées de bout en bout.", id: "security" },
-            { icon: Baby, title: "Argent de Poche", desc: "Créez des comptes pour vos enfants et fixez des limites mensuelles." },
-            { icon: Target, title: "Objectifs de Vie", desc: "Visualisez votre progression vers vos rêves les plus fous." }
+            { icon: TrendingUp, title: "Analyse Intelligente", desc: "Visualisez vos dépenses par catégorie et comprenez où va votre argent." },
+            { icon: Target, title: "Épargne Objectif", desc: "Définissez des buts, épargnez petit à petit et suivez vos progrès." },
+            { icon: CalendarDays, title: "Transactions Récurrentes", desc: "Automatisez le suivi de vos revenus et charges fixes." }
           ].map((f, i) => (
-            <div key={i} id={f.id} className="group p-10 rounded-[2.5rem] border border-primary/5 bg-white/40 backdrop-blur-sm transition-all hover:border-primary/20 hover:shadow-soft text-left">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                <f.icon size={28} strokeWidth={2.5} />
+            <div key={i} className="flex gap-4 p-5 rounded-2xl border border-primary/5 bg-white/40 backdrop-blur-sm">
+              <div className="w-10 h-10 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <f.icon size={20} />
               </div>
-              <h3 className="text-2xl font-black mb-4 text-primary tracking-tight">{f.title}</h3>
-              <p className="text-base font-bold text-muted-foreground/70 leading-relaxed">{f.desc}</p>
+              <div>
+                <h3 className="text-sm font-black text-primary">{f.title}</h3>
+                <p className="text-[11px] font-bold text-muted-foreground/80 mt-0.5">{f.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Auth Modal */}
       <Dialog open={isAuthOpen} onOpenChange={setIsAuthOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-3xl border-none shadow-soft bg-background/95 backdrop-blur-lg">
+        <DialogContent className="sm:max-w-[400px] rounded-3xl border-none shadow-soft bg-background/95 backdrop-blur-lg">
           <DialogHeader>
-            <DialogTitle className="text-3xl font-black text-primary tracking-tight text-center pt-4">{authTab === 'login' ? 'Coucou ! ✨' : 'Bienvenue ! 🌸'}</DialogTitle>
+            <DialogTitle className="text-xl font-black text-primary tracking-tight text-center pt-4">{authTab === 'login' ? 'Content de te revoir !' : 'Rejoins l\'aventure ✨'}</DialogTitle>
           </DialogHeader>
           <Tabs value={authTab} onValueChange={(v) => setAuthTab(v as any)} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-10 bg-secondary/50 p-1.5 rounded-2xl h-14">
-              <TabsTrigger value="login" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black">Connexion</TabsTrigger>
-              <TabsTrigger value="register" className="rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-black">Inscription</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 mb-8 bg-secondary/50 p-1 rounded-xl h-10">
+              <TabsTrigger value="login" className="rounded-lg text-xs font-black">Connexion</TabsTrigger>
+              <TabsTrigger value="register" className="rounded-lg text-xs font-black">Inscription</TabsTrigger>
             </TabsList>
-
-            <TabsContent value="login" className="animate-in fade-in slide-in-from-bottom-4">
-              <form onSubmit={handleLogin} className="space-y-6 text-left">
-                <div className="space-y-3">
-                  <Label htmlFor="email" className="text-xs font-black uppercase tracking-widest text-primary/60 ml-2">Email</Label>
-                  <Input 
-                    id="email" type="email" placeholder="maia@exemple.com"
-                    value={email} onChange={(e) => setEmail(e.target.value)} required
-                    className="h-14 bg-white/50 rounded-2xl font-bold"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="password" title="password" className="text-xs font-black uppercase tracking-widest text-primary/60 ml-2">Mot de passe</Label>
-                  <Input 
-                    id="password" type="password"
-                    value={password} onChange={(e) => setPassword(e.target.value)} required
-                    className="h-14 bg-white/50 rounded-2xl font-bold"
-                  />
-                </div>
-                <Button type="submit" disabled={loading} className="h-16 w-full bg-primary text-primary-foreground font-black text-lg shadow-glow hover:shadow-glow/50 mt-6 rounded-full transition-all hover:scale-[1.02]">
-                  {loading ? 'Connexion...' : 'Accéder à mon VAULT ✨'}
-                  <ArrowRight size={20} className="ml-2" strokeWidth={3} />
-                </Button>
+            <TabsContent value="login" className="animate-in fade-in">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className="rounded-xl h-12" />
+                <Input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} required className="rounded-xl h-12" />
+                <Button type="submit" className="w-full h-12 rounded-xl font-black">Connexion</Button>
               </form>
             </TabsContent>
-
-            <TabsContent value="register" className="animate-in fade-in slide-in-from-bottom-4">
-              <form onSubmit={handleRegister} className="space-y-5 text-left">
-                <div className="space-y-3">
-                  <Label htmlFor="reg-name" className="text-xs font-black uppercase tracking-widest text-primary/60 ml-2">Nom d'affichage</Label>
-                  <Input 
-                    id="reg-name" placeholder="Maïa"
-                    value={displayName} onChange={(e) => setDisplayName(e.target.value)} required
-                    className="h-14 bg-white/50 rounded-2xl font-bold"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="reg-email" className="text-xs font-black uppercase tracking-widest text-primary/60 ml-2">Email</Label>
-                  <Input 
-                    id="reg-email" type="email" placeholder="maia@exemple.com"
-                    value={email} onChange={(e) => setEmail(e.target.value)} required
-                    className="h-14 bg-white/50 rounded-2xl font-bold"
-                  />
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="reg-password" title="reg-password" className="text-xs font-black uppercase tracking-widest text-primary/60 ml-2">Mot de passe</Label>
-                  <Input 
-                    id="reg-password" type="password"
-                    value={password} onChange={(e) => setPassword(e.target.value)} required
-                    className="h-14 bg-white/50 rounded-2xl font-bold"
-                  />
-                </div>
-                <Button type="submit" disabled={loading} className="h-16 w-full bg-primary text-primary-foreground font-black text-lg shadow-glow hover:shadow-glow/50 mt-6 rounded-full transition-all hover:scale-[1.02]">
-                  {loading ? 'Création...' : 'Créer mon compte 🌸'}
-                  <Heart size={20} className="ml-2" strokeWidth={3} />
-                </Button>
+            <TabsContent value="register" className="animate-in fade-in">
+              <form onSubmit={handleRegister} className="space-y-4">
+                <Input placeholder="Nom" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required className="rounded-xl h-12" />
+                <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className="rounded-xl h-12" />
+                <Input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} required className="rounded-xl h-12" />
+                <Button type="submit" className="w-full h-12 rounded-xl font-black">S'inscrire</Button>
               </form>
             </TabsContent>
           </Tabs>
         </DialogContent>
       </Dialog>
 
-
-      {/* Footer */}
-      <footer className="relative z-10 py-16 border-t border-primary/5 text-center text-primary/60 text-sm font-bold">
-        <div className="flex items-center justify-center gap-2 mb-6 group cursor-default">
-          <Wallet size={20} className="text-primary group-hover:rotate-12 transition-transform" strokeWidth={2.5} />
-          <span className="font-black text-primary text-xl tracking-tighter italic">VAULT</span>
-        </div>
-        <p>© 2026 VAULT — Conçu avec ❤️ pour les familles modernes.</p>
+      <footer className="py-10 text-center text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">
+        VAULT © 2026 — BUDGET FAMILIAL
       </footer>
     </div>
   );

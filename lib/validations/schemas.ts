@@ -2,11 +2,14 @@
 import * as z from 'zod';
 
 export const transactionSchema = z.object({
-  amount: z.coerce.number().positive('Le montant doit être positif'),
+  amount: z.preprocess((val) => {
+    if (typeof val === 'string') return parseFloat(val.replace(',', '.'));
+    return val;
+  }, z.number().positive('Le montant doit être positif')),
   type: z.enum(['income', 'expense']),
   label: z.string().min(1, 'La description est requise'),
-  category: z.string().optional(),
-  note: z.string().optional(),
+  category: z.string().optional().nullable(),
+  note: z.string().optional().nullable(),
   date: z.string().min(1, 'La date est requise'),
   is_recurring: z.boolean().default(false),
   recurrence_type: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional().nullable(),
