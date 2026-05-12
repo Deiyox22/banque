@@ -1,24 +1,24 @@
 // app/(dashboard)/transactions/page.tsx
-import { createClient } from '@/lib/supabase/server';
-import { getTransactionsData } from '@/lib/data/transactions';
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import { fetchTransactionsData } from '@/lib/api/transactions';
 import { TransactionsClient } from './TransactionsClient';
+import { Loader2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
+export default function TransactionsPage() {
+  const searchParams = useSearchParams();
+  
+  const month = parseInt(searchParams.get('month') || (new Date().getMonth() + 1).toString());
+  const year = parseInt(searchParams.get('year') || new Date().getFullYear().toString());
 
-export default async function TransactionsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ month?: string; year?: string }>;
-}) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const awaitedSearchParams = await searchParams;
+  const { data, isLoading } = useQuery({
+    queryKey: ['transactions', month, year],
+    queryFn: () => fetchTransactionsData(month, year),
+  });
 
-  const now = new Date();
-  const month = parseInt(awaitedSearchParams.month || (now.getMonth() + 1).toString());
-  const year = parseInt(awaitedSearchParams.year || now.getFullYear().toString());
+  if (isLoading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>;
 
-  const transactions = await getTransactionsData(user!.id, month, year);
-
-  return <TransactionsClient initialTransactions={transactions} month={month} year={year} />;
+  return <TransactionsClient initialTransactions={data || []} month={month} year={year} />;
 }

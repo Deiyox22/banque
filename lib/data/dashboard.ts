@@ -14,6 +14,12 @@ import { createClient } from '@/lib/supabase/server';
 //   // other fields...
 // }
 
+// Fonction utilitaire pour parser YYYY-MM-DD sans décalage UTC
+function parseLocalDate(dateString: string) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export async function getDashboardData(userId: string, month: number, year: number) {
   const supabase = createClient();
 
@@ -33,18 +39,15 @@ export async function getDashboardData(userId: string, month: number, year: numb
   const monthlyTransactions: any[] = []; // Array to hold transactions for the current dashboard view
 
   for (const tx of allTransactions) {
-    console.log(`Processing tx: ${tx.label}, type: ${tx.recurrence_type}, date: ${tx.date}`);
-    const startDate = new Date(tx.date);
-    const endDate = tx.recurrence_end_date ? new Date(tx.recurrence_end_date) : null;
+    const startDate = parseLocalDate(tx.date);
+    const endDate = tx.recurrence_end_date ? parseLocalDate(tx.recurrence_end_date) : null;
 
     const isRecurring = !!tx.recurrence_type;
-    console.log(`Tx ${tx.label} isRecurring: ${isRecurring}`);
 
     if (!isRecurring) {
       // --- Non-recurring transactions ---
       // Filter these based on whether their date falls within the target month/year.
       if (startDate >= targetMonthStartBoundary && startDate < targetMonthEndBoundary) {
-        console.log(`Including non-recurring tx: ${tx.label}`);
         monthlyTransactions.push(tx);
       }
     } else {
@@ -55,31 +58,22 @@ export async function getDashboardData(userId: string, month: number, year: numb
 
       if (tx.recurrence_type === 'monthly') {
         // --- Monthly recurrence ---
-        // Construct the potential date for this recurring transaction in the target month.
-        // Adding a slight offset or ensuring UTC alignment might be needed.
-        // Using UTC date methods can often avoid timezone-related shifts.
-        let potentialInstanceDate = new Date(Date.UTC(year, month - 1, originalDayOfMonth));
+        let potentialInstanceDate = new Date(year, month - 1, originalDayOfMonth);
         
         // Handle day overflow:
-        const daysInTargetMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+        const daysInTargetMonth = new Date(year, month, 0).getDate();
         if (originalDayOfMonth > daysInTargetMonth) {
-            potentialInstanceDate.setUTCDate(daysInTargetMonth);
+            potentialInstanceDate.setDate(daysInTargetMonth);
         }
         
         // Normalize time:
-        potentialInstanceDate.setUTCHours(0, 0, 0, 0);
+        potentialInstanceDate.setHours(0, 0, 0, 0);
 
         // Check if this generated date is valid:
-        const startDateUTC = new Date(startDate.getTime() + startDate.getTimezoneOffset() * 60000);
-        const targetMonthEndBoundaryUTC = new Date(Date.UTC(year, month, 1));
-        
-        console.log(`Checking instance for ${tx.label}: ${potentialInstanceDate.toISOString().split('T')[0]}, Start: ${startDateUTC.toISOString().split('T')[0]}, EndBoundary: ${targetMonthEndBoundaryUTC.toISOString().split('T')[0]}`);
-        
-        if (potentialInstanceDate >= startDateUTC &&
-            potentialInstanceDate < targetMonthEndBoundaryUTC &&
+        if (potentialInstanceDate >= startDate &&
+            potentialInstanceDate < targetMonthEndBoundary &&
             (!endDate || potentialInstanceDate <= endDate)
            ) {
-            console.log(`Including generated monthly instance: ${tx.label}, date: ${potentialInstanceDate.toISOString().split('T')[0]}`);
             
             const instance = {
                 ...tx,
@@ -90,8 +84,6 @@ export async function getDashboardData(userId: string, month: number, year: numb
         }
       } else if (tx.recurrence_type === 'yearly') {
           // --- Yearly recurrence ---
-          // Check if the target month and year align with the yearly recurrence pattern.
-          // The instance date should conceptually be the same month and day as the original start date, but in the target year.
           const instanceDate = new Date(startDate); // Start with the original transaction date
           instanceDate.setFullYear(year); // Set the year to the target year
           instanceDate.setMonth(month - 1); // Set the month to the target month
@@ -119,11 +111,6 @@ export async function getDashboardData(userId: string, month: number, year: numb
           }
       } else {
           // --- Daily, Weekly, or other/unspecified recurrence types ---
-          // For these types, we won't generate specific instances per day/week for this fix,
-          // as the prompt focuses on monthly transactions. Instead, we apply the original filtering logic:
-          // if the recurring definition itself spans the target month, include the original transaction object.
-          // This ensures that these recurring definitions are considered if they are active during the month,
-          // without complex generation logic for non-monthly types.
           if (startDate < targetMonthEndBoundary && (!endDate || endDate >= targetMonthStartBoundary)) {
               monthlyTransactions.push(tx);
           }

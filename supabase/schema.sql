@@ -71,6 +71,19 @@ CREATE TABLE savings_goals (
   created_at timestamptz DEFAULT now()
 );
 
+-- Catégories masquées
+CREATE TABLE hidden_categories (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  UNIQUE(user_id, name)
+);
+
+ALTER TABLE hidden_categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own hidden categories" ON hidden_categories
+  FOR ALL USING (user_id = auth.uid());
+
 -- 2. ROW LEVEL SECURITY (RLS)
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;

@@ -9,11 +9,18 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { deleteAccount } from '@/lib/actions/auth';
 
+import { useEffect } from 'react';
+import { useVaultStore } from '@/store/useVaultStore';
+
 export default function SettingsClient({ displayName }: { displayName: string }) {
   const [name, setName] = useState(displayName);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+  const storeDisplayName = useVaultStore((state) => state.displayName);
 
+  useEffect(() => setMounted(true), []);
+  
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push('/login');
@@ -70,6 +77,12 @@ export default function SettingsClient({ displayName }: { displayName: string })
             </Button>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="text-center pt-12 pb-8">
+        <p className="text-[10px] font-bold text-muted-foreground/50 tracking-widest uppercase">
+          {mounted ? (storeDisplayName || 'Utilisateur') : 'Utilisateur'} La Star ✨
+        </p>
       </div>
     </div>
   );

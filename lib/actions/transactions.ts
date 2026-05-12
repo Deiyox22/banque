@@ -61,9 +61,25 @@ export async function updateTransaction(id: string, formData: any) {
     console.error('Erreur Supabase:', error);
     throw new Error(error.message);
   }
+}
 
-  // revalidatePath('/transactions');
-  // revalidatePath('/');
+export async function hideCategory(name: string) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) throw new Error('Non authentifié');
+
+  const { error } = await supabase
+    .from('hidden_categories')
+    .insert({
+      user_id: user.id,
+      name,
+    });
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath('/transactions');
+  revalidatePath('/');
 }
 
 export async function deleteTransaction(id: string) {
@@ -72,7 +88,6 @@ export async function deleteTransaction(id: string) {
 
   if (!user) throw new Error('Non authentifié');
 
-  // 1. Get transaction info
   const { data: tx } = await supabase
     .from('transactions')
     .select('label, amount, type, category')
@@ -82,7 +97,6 @@ export async function deleteTransaction(id: string) {
 
   if (!tx) throw new Error('Transaction non trouvée');
 
-  // 2. If it's a savings transaction, update the goal
   if (tx.category === 'Économies') {
     const goalName = tx.label.replace('Épargne: ', '').replace('Retrait épargne: ', '');
     const { data: goal } = await supabase
@@ -93,8 +107,6 @@ export async function deleteTransaction(id: string) {
         .single();
     
     if (goal) {
-        // Si c'est une dépense (Épargne ajoutée), on doit soustraire de l'objectif (car on annule l'ajout).
-        // Si c'est un revenu (Retrait épargne), on doit ajouter à l'objectif (car on annule le retrait).
         const adjustment = tx.type === 'expense' ? tx.amount : -tx.amount;
         await supabase
             .from('savings_goals')
@@ -110,8 +122,7 @@ export async function deleteTransaction(id: string) {
     .eq('owner_id', user.id);
 
   if (error) throw new Error(error.message);
-
-  // revalidatePath('/transactions');
-  // revalidatePath('/goals');
-  // revalidatePath('/');
+  
+  revalidatePath('/transactions');
+  revalidatePath('/');
 }

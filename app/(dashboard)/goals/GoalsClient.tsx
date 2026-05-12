@@ -1,12 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GoalCard from '@/components/shared/GoalCard';
 import AddSavingsModal from '@/components/shared/AddSavingsModal';
 import GoalModal from '@/components/shared/GoalModal';
 
+import { useVaultStore } from '@/store/useVaultStore';
+
 export default function GoalsClient({ goals: initialGoals }: { goals: any[] }) {
   const [selectedGoalId, setSelectedGoalId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const displayName = useVaultStore((state) => state.displayName);
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <div className="space-y-12">
@@ -46,6 +52,12 @@ export default function GoalsClient({ goals: initialGoals }: { goals: any[] }) {
           onClose={() => setSelectedGoalId(null)} 
         />
       )}
+
+      <div className="text-center pt-12 pb-8">
+        <p className="text-[10px] font-bold text-muted-foreground/50 tracking-widest uppercase">
+          {mounted ? (displayName || 'Utilisateur') : 'Utilisateur'} La Star ✨
+        </p>
+      </div>
     </div>
   );
 }

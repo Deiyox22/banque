@@ -32,6 +32,10 @@ export function TransactionsClient({ initialTransactions, month, year }: { initi
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const displayName = useVaultStore((state) => state.displayName);
+  
+  useEffect(() => setMounted(true), []);
   
   const setTransactions = useVaultStore((state) => state.setTransactions);
   const transactions = useVaultStore((state) => state.transactions);
@@ -202,6 +206,12 @@ export function TransactionsClient({ initialTransactions, month, year }: { initi
       </div>
 
       <TransactionModal mode="fab" />
-    </div>
-  );
-}
+
+      <div className="text-center pt-12 pb-8">
+        <p className="text-[10px] font-bold text-muted-foreground/50 tracking-widest uppercase">
+          {mounted ? (displayName || 'Utilisateur') : 'Utilisateur'} La Star ✨
+        </p>
+      </div>
+      </div>
+      );
+      }
