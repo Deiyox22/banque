@@ -22,7 +22,7 @@ export default function MonthNavigation({
 
   const handleNavigate = (newMonth: number, newYear: number) => {
     startTransition(() => {
-      router.push(`${baseUrl}?month=${newMonth}&year=${newYear}`);
+      router.push(`${baseUrl}?month=${newMonth}&year=${newYear}`, { scroll: false });
     });
   };
 

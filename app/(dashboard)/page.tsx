@@ -30,12 +30,13 @@ export default function DashboardPage() {
     }
   }, [supabase, displayName, setDisplayName]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ['dashboard', month, year],
     queryFn: () => fetchDashboardData(month, year),
+    placeholderData: (prev) => prev,
   });
 
-  if (isLoading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>;
+  if (isLoading && !data) return <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>;
 
   return <DashboardClient initialData={data} displayName={displayName || 'Utilisateur'} month={month} year={year} />;
 }

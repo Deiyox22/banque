@@ -16,9 +16,10 @@ export default function TransactionsPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['transactions', month, year],
     queryFn: () => fetchTransactionsData(month, year),
+    placeholderData: (prev) => prev,
   });
 
-  if (isLoading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>;
+  if (isLoading && !data) return <div className="py-20 flex justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>;
 
   return <TransactionsClient initialTransactions={data || []} month={month} year={year} />;
 }
