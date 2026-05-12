@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 interface ChildCardProps {
   id: string;

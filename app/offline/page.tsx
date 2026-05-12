@@ -1,7 +1,7 @@
 // app/offline/page.tsx
 import { WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 
 export default function OfflinePage() {
   return (
