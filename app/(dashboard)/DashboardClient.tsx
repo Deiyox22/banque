@@ -37,9 +37,9 @@ export default function DashboardClient({ initialData, displayName, month, year 
 
       <>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            <BalanceCard title="Mon Solde" amount={balance} type="total" />
             <BalanceCard title="Revenus" amount={totalIncome} type="income" />
             <BalanceCard title="Dépenses" amount={totalExpense} type="expense" />
+            <BalanceCard title="Mon Solde" amount={balance} type="total" />
             <BalanceCard title="Épargne" amount={totalSavings} type="savings" />
         </div>
 
