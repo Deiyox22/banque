@@ -6,6 +6,7 @@ import { transactionSchema } from '@/lib/validations/schemas';
 import { revalidatePath } from 'next/cache';
 
 export async function createTransaction(formData: any) {
+  console.log('Début createTransaction');
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -14,6 +15,7 @@ export async function createTransaction(formData: any) {
   const validatedFields = transactionSchema.safeParse(formData);
 
   if (!validatedFields.success) {
+    console.log('Validation échouée', validatedFields.error);
     return { error: validatedFields.error.flatten().fieldErrors };
   }
 
@@ -25,6 +27,7 @@ export async function createTransaction(formData: any) {
     ])
   );
 
+  console.log('Insertion dans transactions...');
   const { error } = await supabase
     .from('transactions')
     .insert({
@@ -32,10 +35,35 @@ export async function createTransaction(formData: any) {
       owner_id: user.id,
     });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.log('Erreur insertion:', error);
+    throw new Error(error.message);
+  }
 
+  console.log('Insertion réussie');
+
+  if (data.category === 'Économies' && data.label && typeof data.label === 'string' && data.label.startsWith('Épargne: ')) {
+    const goalName = data.label.replace('Épargne: ', '');
+    const { data: goal } = await supabase
+        .from('savings_goals')
+        .select('id, current_amount')
+        .eq('name', goalName)
+        .eq('owner_id', user.id)
+        .single();
+    
+    if (goal) {
+        console.log('Mise à jour objectif...');
+        await supabase
+            .from('savings_goals')
+            .update({ current_amount: goal.current_amount + Number(data.amount) })
+            .eq('id', goal.id);
+    }
+  }
+
+  console.log('revalidatePath...');
   revalidatePath('/transactions');
   revalidatePath('/');
+  console.log('Fin createTransaction');
 }
 
 export async function updateTransaction(id: string, formData: any) {
@@ -88,40 +116,61 @@ export async function deleteTransaction(id: string) {
 
   if (!user) throw new Error('Non authentifié');
 
+  console.log('Suppression ID original reçu:', id);
+
+  // Un UUID standard a 5 segments séparés par des tirets
+  // Format : xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  const originalId = id.includes('-') && id.split('-').length > 5 
+    ? id.split('-').slice(0, 5).join('-') 
+    : id;
+  console.log('ID nettoyé pour Supabase:', originalId);
+
+  // Si l'ID est clairement invalide (trop court pour un UUID), on arrête.
+  if (originalId.length < 8) {
+      console.error('ID trop court pour être un UUID:', originalId);
+      throw new Error('Identifiant de transaction invalide');
+  }
+
+  // Récupérer la transaction AVANT de la supprimer pour ajuster l'objectif si nécessaire
+  // On utilise une recherche par libellé ou une autre clé si l'ID échoue, 
+  // mais pour l'instant on reste sur l'ID.
   const { data: tx } = await supabase
     .from('transactions')
-    .select('label, amount, type, category')
-    .eq('id', id)
+    .select('id, label, amount, type, category')
+    .eq('id', originalId)
     .eq('owner_id', user.id)
     .single();
 
-  if (!tx) throw new Error('Transaction non trouvée');
-
-  if (tx.category === 'Économies') {
-    const goalName = tx.label.replace('Épargne: ', '').replace('Retrait épargne: ', '');
-    const { data: goal } = await supabase
-        .from('savings_goals')
-        .select('id, current_amount')
-        .eq('name', goalName)
-        .eq('owner_id', user.id)
-        .single();
-    
-    if (goal) {
-        const adjustment = tx.type === 'expense' ? tx.amount : -tx.amount;
-        await supabase
-            .from('savings_goals')
-            .update({ current_amount: goal.current_amount - adjustment })
-            .eq('id', goal.id);
+  if (tx) {
+    if (tx.category === 'Économies') {
+      const goalName = tx.label.replace('Épargne: ', '').replace('Retrait épargne: ', '');
+      const { data: goal } = await supabase
+          .from('savings_goals')
+          .select('id, current_amount')
+          .eq('name', goalName)
+          .eq('owner_id', user.id)
+          .single();
+      
+      if (goal) {
+          const adjustment = tx.type === 'expense' ? tx.amount : -tx.amount;
+          await supabase
+              .from('savings_goals')
+              .update({ current_amount: goal.current_amount - adjustment })
+              .eq('id', goal.id);
+      }
     }
   }
 
   const { error } = await supabase
     .from('transactions')
     .delete()
-    .eq('id', id)
+    .eq('id', originalId)
     .eq('owner_id', user.id);
 
-  if (error) throw new Error(error.message);
+  if (error) {
+      console.error('Erreur Supabase delete:', error);
+      throw new Error(error.message);
+  }
   
   revalidatePath('/transactions');
   revalidatePath('/');

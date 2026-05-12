@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createTransaction, updateTransaction } from '@/lib/actions/transactions';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -19,7 +19,8 @@ import { createClient } from '@/lib/supabase/client';
 const EXPENSE_CATEGORIES_DEFAULT = ['Alimentation', 'Loyer', 'Loisirs', 'Transports', 'Santé', 'Éducation', 'Autres'];
 const INCOME_CATEGORIES_DEFAULT = ['Salaire', 'Dividendes', 'Vente', 'Cadeau', 'Autre'];
 
-export default function TransactionForm({ onSuccess, initialData }: { onSuccess?: () => void, initialData?: any }) {
+export default function TransactionForm({ onSuccess, initialData, defaultDate }: { onSuccess?: () => void, initialData?: any, defaultDate?: string }) {
+  const queryClient = useQueryClient();
   const transactions = useVaultStore((state) => state.transactions);
   const setTransactions = useVaultStore((state) => state.setTransactions);
   const fetchTransactions = useVaultStore((state) => state.fetchTransactions);
@@ -27,7 +28,7 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
   const { register, handleSubmit, control, formState: { isSubmitting }, reset, watch } = useForm<any>({
     resolver: zodResolver(transactionSchema),
     defaultValues: initialData || {
-      date: new Date().toISOString().split('T')[0],
+      date: defaultDate || new Date().toISOString().split('T')[0],
       type: 'expense',
       is_recurring: false,
     }
@@ -57,15 +58,18 @@ export default function TransactionForm({ onSuccess, initialData }: { onSuccess?
       if (initialData) {
         await updateTransaction(initialData.id, data);
         setTransactions(transactions.map(t => t.id === initialData.id ? { ...t, ...data } : t));
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] });
         toast.success('Transaction mise à jour avec succès ! ✨');
       } else {
         await createTransaction(data);
         fetchTransactions(new Date().getMonth() + 1, new Date().getFullYear());
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] });
         toast.success(`Transaction ajoutée ✨`);
       }
       reset();
       if (onSuccess) onSuccess();
     } catch (err: any) {
+      console.error('Erreur attrapée dans onSubmit:', err);
       toast.error('Oups ! Une erreur est survenue.');
     }
   };

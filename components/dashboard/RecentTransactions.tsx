@@ -41,10 +41,13 @@ const getCategoryIcon = (category: string, type: 'income' | 'expense') => {
   return <MinusCircle size={18} className="text-rose-400" />;
 };
 
+import { useQueryClient } from '@tanstack/react-query';
+
 export default function RecentTransactions({ transactions }: RecentTransactionsProps) {
   const deleteLocalTransaction = useVaultStore((state) => state.deleteLocalTransaction);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(5);
+  const queryClient = useQueryClient();
   
   const sortedTransactions = [...transactions]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -55,6 +58,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
   const handleDelete = async (id: string) => {
       deleteLocalTransaction(id);
       await deleteTransaction(id);
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
       toast.success('Hop ! Disparue. ✨');
   };
 
