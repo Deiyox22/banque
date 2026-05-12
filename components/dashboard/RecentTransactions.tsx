@@ -44,10 +44,13 @@ const getCategoryIcon = (category: string, type: 'income' | 'expense') => {
 export default function RecentTransactions({ transactions }: RecentTransactionsProps) {
   const deleteLocalTransaction = useVaultStore((state) => state.deleteLocalTransaction);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(5);
   
-  const recent = [...transactions]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 5);
+  const sortedTransactions = [...transactions]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const visibleTransactions = sortedTransactions.slice(0, visibleCount);
+  const hasMore = visibleCount < sortedTransactions.length;
 
   const handleDelete = async (id: string) => {
       deleteLocalTransaction(id);
@@ -67,7 +70,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
       </CardHeader>
       <CardContent className="p-3 sm:p-6 pt-0">
         <div className="space-y-3">
-          {recent.map((tx) => (
+          {visibleTransactions.map((tx) => (
             <div 
               key={tx.id} 
               className="flex items-center p-3 sm:p-4 rounded-2xl bg-white/60 transition-all border-b border-rose-100 last:border-none group"
@@ -107,7 +110,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                 </div>
             </div>
           ))}
-          {recent.length === 0 && (
+          {sortedTransactions.length === 0 && (
             <div className="py-12 text-center flex flex-col items-center gap-4">
               <div className="h-16 w-16 rounded-full bg-secondary flex items-center justify-center text-primary">
                 <PenLine size={32} />
@@ -118,9 +121,11 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
             </div>
           )}
         </div>
-        <Button variant="ghost" className="w-full mt-6 text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-2xl py-6" asChild>
-            <Link href="/transactions">Historique complet <ArrowRight size={14} className="ml-2" strokeWidth={3} /></Link>
-        </Button>
+        {hasMore && (
+            <Button variant="ghost" className="w-full mt-6 text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-2xl py-6" onClick={() => setVisibleCount(c => c + 5)}>
+                Voir plus <ArrowRight size={14} className="ml-2" strokeWidth={3} />
+            </Button>
+        )}
       </CardContent>
     </Card>
   );

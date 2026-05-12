@@ -7,7 +7,6 @@ import { Card } from '@/components/ui/card';
 import SpendingChart from '@/components/dashboard/SpendingChart';
 import RecentTransactions from '@/components/dashboard/RecentTransactions';
 import MonthNavigation from '@/components/shared/MonthNavigation';
-import { Loader2 } from 'lucide-react';
 
 export default function DashboardClient({ initialData, displayName, month, year }: { initialData: any, displayName: string, month: number, year: number }) {
   const { setTransactions } = useVaultStore();
