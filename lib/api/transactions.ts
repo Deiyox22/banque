@@ -50,10 +50,11 @@ export async function fetchTransactionsData(month: number, year: number) {
             potentialInstanceDate < targetMonthEndBoundary &&
             (!endDate || potentialInstanceDate <= endDate)
            ) {
+            const dateString = `${potentialInstanceDate.getFullYear()}-${String(potentialInstanceDate.getMonth() + 1).padStart(2, '0')}-${String(potentialInstanceDate.getDate()).padStart(2, '0')}`;
             monthlyTransactions.push({
                 ...tx,
-                id: `${tx.id}-${potentialInstanceDate.toISOString().split('T')[0]}`,
-                date: potentialInstanceDate.toISOString().split('T')[0],
+                id: `${tx.id}-${dateString}`,
+                date: dateString,
             });
         }
       } else if (tx.recurrence_type === 'yearly') {
@@ -67,15 +68,16 @@ export async function fetchTransactionsData(month: number, year: number) {
           }
 
           instanceDate.setHours(0, 0, 0, 0);
-          
+
           if (instanceDate >= startDate &&
               instanceDate < targetMonthEndBoundary &&
               (!endDate || instanceDate <= endDate)
              ) {
+              const dateString = `${instanceDate.getFullYear()}-${String(instanceDate.getMonth() + 1).padStart(2, '0')}-${String(instanceDate.getDate()).padStart(2, '0')}`;
               monthlyTransactions.push({
                   ...tx,
-                  id: `${tx.id}-${instanceDate.toISOString().split('T')[0]}`,
-                  date: instanceDate.toISOString().split('T')[0],
+                  id: `${tx.id}-${dateString}`,
+                  date: dateString,
               });
           }
       } else {

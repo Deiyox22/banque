@@ -40,20 +40,36 @@ export default function TransactionForm({ onSuccess, initialData, defaultDate }:
       queryKey: ['all-categories'],
       queryFn: async () => {
           const supabase = createClient();
-          // Récupérer les catégories utilisées ET les catégories masquées
-          const { data: txs } = await supabase.from('transactions').select('category').not('category', 'is', null);
+          // Récupérer les catégories utilisées et leur type associé
+          const { data: txs } = await supabase.from('transactions').select('category, type').not('category', 'is', null);
           const { data: hidden } = await supabase.from('hidden_categories').select('name');
           
-          const allCats = Array.from(new Set(txs?.map(t => t.category))).filter(Boolean);
           const hiddenCats = new Set(hidden?.map(h => h.name));
           
-          return allCats.filter(c => !hiddenCats.has(c));
+          // Retourner un objet groupé par type
+          const grouped: Record<string, string[]> = { income: [], expense: [] };
+          txs?.forEach(tx => {
+             if (tx.type === 'income' || tx.type === 'expense') {
+                if (!hiddenCats.has(tx.category)) {
+                    grouped[tx.type].push(tx.category);
+                }
+             }
+          });
+          
+          Object.keys(grouped).forEach(t => grouped[t] = Array.from(new Set(grouped[t])));
+          return grouped;
       }
   });
 
-  const categories = Array.from(new Set([...(type === 'income' ? INCOME_CATEGORIES_DEFAULT : EXPENSE_CATEGORIES_DEFAULT), ...dynamicCats]));
+  const categories = Array.from(new Set([
+      ...(type === 'income' 
+        ? [...INCOME_CATEGORIES_DEFAULT, ...(dynamicCats.income || [])] 
+        : [...EXPENSE_CATEGORIES_DEFAULT, ...(dynamicCats.expense || [])]
+      )
+  ]));
 
   const onSubmit = async (data: any) => {
+    console.log('Soumission formulaire avec date:', data.date);
     try {
       if (initialData) {
         await updateTransaction(initialData.id, data);

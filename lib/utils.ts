@@ -12,3 +12,17 @@ export function formatCurrency(amount: number) {
     currency: 'EUR',
   }).format(amount);
 }
+
+export function formatDate(dateString: string) {
+  if (!dateString) return '';
+  // Création directe d'une date en UTC
+  const [year, month, day] = dateString.split('-').map(Number);
+  const d = new Date(Date.UTC(year, month - 1, day));
+  
+  return d.toLocaleDateString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC'
+  });
+}

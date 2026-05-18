@@ -19,13 +19,14 @@ export async function createTransaction(formData: any) {
     return { error: validatedFields.error.flatten().fieldErrors };
   }
 
-  // Nettoyage des champs vides
-  const data = Object.fromEntries(
-    Object.entries(validatedFields.data).map(([key, value]) => [
-      key,
-      value === '' || value === undefined ? null : value
-    ])
-  );
+  const rawData = validatedFields.data;
+  const data = {
+    ...rawData,
+    date: rawData.date ? rawData.date : null,
+    recurrence_end_date: rawData.recurrence_end_date ? rawData.recurrence_end_date : null,
+  };
+
+  console.log('Données envoyées à Supabase:', data);
 
   console.log('Insertion dans transactions...');
   const { error } = await supabase

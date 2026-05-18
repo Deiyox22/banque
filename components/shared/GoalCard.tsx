@@ -1,6 +1,6 @@
 // components/shared/GoalCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
@@ -71,7 +71,7 @@ export default function GoalCard({
           </div>
           {deadline && (
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mt-1">
-              Échéance : {new Date(deadline).toLocaleDateString()}
+              Échéance : {formatDate(deadline)}
             </p>
           )}
         </div>

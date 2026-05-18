@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useVaultStore } from '@/store/useVaultStore';
-import { formatCurrency, cn } from '@/lib/utils';
+import { formatCurrency, cn, formatDate } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2, ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusCircle, MinusCircle, Filter, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -180,7 +180,7 @@ export function TransactionsClient({ initialTransactions, month, year }: { initi
                     </div>
 
                     <div className="flex flex-col items-end shrink-0 gap-1">
-                      <span className="text-[10px] font-medium text-muted-foreground/60">{new Date(tx.date).toLocaleDateString()}</span>
+                      <span className="text-[10px] font-medium text-muted-foreground/60">{formatDate(tx.date)}</span>
                       <div className="flex gap-0">
                           <TransactionModal mode="icon" transaction={tx} />
                           <Button 

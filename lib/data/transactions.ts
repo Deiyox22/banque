@@ -1,5 +1,11 @@
 import { createClient } from '@/lib/supabase/server';
 
+function parseLocalDate(dateString: string) {
+  const [year, month, day] = dateString.split('-').map(Number);
+  // Retourne une date à minuit UTC, mais qui sera manipulée uniquement via ses composants pour éviter les décalages.
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
 export async function getTransactionsData(userId: string, month: number, year: number) {
   const supabase = createClient();
 
@@ -10,63 +16,73 @@ export async function getTransactionsData(userId: string, month: number, year: n
 
   const allTransactions = allTransactionsRaw || [];
 
+  // Define the date boundaries for the target month (Local date)
+  // Utilisation de chaînes YYYY-MM-DD pour les comparaisons afin d'éviter les décalages UTC
+  const targetStartStr = `${year}-${String(month).padStart(2, '0')}-01`;
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  const targetEndStr = `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`;
+  
+  // Requis pour la logique de récurrence
   const targetMonthStartBoundary = new Date(year, month - 1, 1);
   const targetMonthEndBoundary = new Date(year, month, 1);
 
   const monthlyTransactions: any[] = [];
 
   for (const tx of allTransactions) {
-    const startDate = new Date(tx.date);
-    const endDate = tx.recurrence_end_date ? new Date(tx.recurrence_end_date) : null;
-
+    // tx.date est au format YYYY-MM-DD
+    const txDate = tx.date;
+    
+    // Pour la récurrence, on utilise la logique locale déjà corrigée
+    const startDate = parseLocalDate(tx.date);
+    const endDate = tx.recurrence_end_date ? parseLocalDate(tx.recurrence_end_date) : null;
     const isRecurring = !!tx.recurrence_type;
 
     if (!isRecurring) {
-      if (startDate >= targetMonthStartBoundary && startDate < targetMonthEndBoundary) {
+      if (txDate >= targetStartStr && txDate < targetEndStr) {
         monthlyTransactions.push(tx);
       }
     } else {
+      // ... (logique de récurrence)
       const originalDayOfMonth = startDate.getDate();
 
       if (tx.recurrence_type === 'monthly') {
-        let potentialInstanceDate = new Date(year, month - 1, originalDayOfMonth);
-        const daysInTargetMonth = new Date(year, month, 0).getDate();
-        if (originalDayOfMonth > daysInTargetMonth) {
-          potentialInstanceDate.setDate(daysInTargetMonth);
-        }
+        const potentialDate = new Date(year, month - 1, originalDayOfMonth);
         
-        potentialInstanceDate.setHours(0, 0, 0, 0);
+        const daysInTargetMonth = new Date(year, month, 0).getDate();
+        const finalDay = Math.min(originalDayOfMonth, daysInTargetMonth);
+        const finalDate = new Date(year, month - 1, finalDay);
 
-        if (potentialInstanceDate >= startDate &&
-            potentialInstanceDate < targetMonthEndBoundary &&
-            (!endDate || potentialInstanceDate <= endDate)
+        const dateString = `${finalDate.getFullYear()}-${String(finalDate.getMonth() + 1).padStart(2, '0')}-${String(finalDate.getDate()).padStart(2, '0')}`;
+
+        if (finalDate >= startDate &&
+            finalDate < targetMonthEndBoundary &&
+            (!endDate || finalDate <= endDate)
            ) {
             monthlyTransactions.push({
                 ...tx,
-                id: `${tx.id}-${potentialInstanceDate.toISOString().split('T')[0]}`,
-                date: potentialInstanceDate.toISOString().split('T')[0],
+                id: `${tx.id}-${dateString}`,
+                date: dateString,
             });
         }
       } else if (tx.recurrence_type === 'yearly') {
-          const instanceDate = new Date(startDate);
-          instanceDate.setFullYear(year);
-          instanceDate.setMonth(month - 1);
+          const instanceDate = new Date(startDate.getFullYear(), month - 1, originalDayOfMonth);
 
           const daysInTargetMonth = new Date(year, month, 0).getDate();
           if (instanceDate.getDate() > daysInTargetMonth) {
               instanceDate.setDate(daysInTargetMonth);
           }
 
-          instanceDate.setHours(0, 0, 0, 0);
-          
+          const dateString = `${instanceDate.getFullYear()}-${String(instanceDate.getMonth() + 1).padStart(2, '0')}-${String(instanceDate.getDate()).padStart(2, '0')}`;
+
           if (instanceDate >= startDate &&
               instanceDate < targetMonthEndBoundary &&
               (!endDate || instanceDate <= endDate)
              ) {
               monthlyTransactions.push({
                   ...tx,
-                  id: `${tx.id}-${instanceDate.toISOString().split('T')[0]}`,
-                  date: instanceDate.toISOString().split('T')[0],
+                  id: `${tx.id}-${dateString}`,
+                  date: dateString,
               });
           }
       } else {

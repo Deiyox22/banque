@@ -74,38 +74,35 @@ export async function getDashboardData(userId: string, month: number, year: numb
             potentialInstanceDate < targetMonthEndBoundary &&
             (!endDate || potentialInstanceDate <= endDate)
            ) {
-            
+            const dateString = `${potentialInstanceDate.getFullYear()}-${String(potentialInstanceDate.getMonth() + 1).padStart(2, '0')}-${String(potentialInstanceDate.getDate()).padStart(2, '0')}`;
             const instance = {
                 ...tx,
-                id: `${tx.id}-${potentialInstanceDate.toISOString().split('T')[0]}`,
-                date: potentialInstanceDate.toISOString().split('T')[0],
+                id: `${tx.id}-${dateString}`,
+                date: dateString,
             };
             monthlyTransactions.push(instance);
         }
       } else if (tx.recurrence_type === 'yearly') {
-          // --- Yearly recurrence ---
-          const instanceDate = new Date(startDate); // Start with the original transaction date
-          instanceDate.setFullYear(year); // Set the year to the target year
-          instanceDate.setMonth(month - 1); // Set the month to the target month
+          const instanceDate = new Date(startDate);
+          instanceDate.setFullYear(year);
+          instanceDate.setMonth(month - 1);
 
-          // Handle day overflow similar to monthly recurrence for consistency.
           const daysInTargetMonth = new Date(year, month, 0).getDate();
           if (instanceDate.getDate() > daysInTargetMonth) {
               instanceDate.setDate(daysInTargetMonth);
           }
 
-          // Normalize time.
           instanceDate.setHours(0, 0, 0, 0);
+          const dateString = `${instanceDate.getFullYear()}-${String(instanceDate.getMonth() + 1).padStart(2, '0')}-${String(instanceDate.getDate()).padStart(2, '0')}`;
           
-          // Check if this yearly instance date falls within the target month and respects recurrence rules.
-          if (instanceDate >= startDate && // Must be on or after the transaction's absolute start date.
-              instanceDate < targetMonthEndBoundary && // Must fall within the target month.
-              (!endDate || instanceDate <= endDate) // Must be on or before the recurrence end date.
+          if (instanceDate >= startDate &&
+              instanceDate < targetMonthEndBoundary &&
+              (!endDate || instanceDate <= endDate)
              ) {
               const instance = {
                   ...tx,
-                  id: `${tx.id}-${instanceDate.toISOString().split('T')[0]}`,
-                  date: instanceDate.toISOString().split('T')[0],
+                  id: `${tx.id}-${dateString}`,
+                  date: dateString,
               };
               monthlyTransactions.push(instance);
           }

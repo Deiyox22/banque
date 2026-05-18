@@ -2,7 +2,7 @@
 
 import { Link } from 'next-view-transitions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 import { ShoppingCart, Utensils, Car, PartyPopper, Heart, Home, Briefcase, PlusCircle, MinusCircle, PenLine, Trash2, ArrowRight } from 'lucide-react';
 import TransactionModal from '@/components/shared/TransactionModal';
@@ -99,7 +99,7 @@ export default function RecentTransactions({ transactions }: RecentTransactionsP
                 </div>
                 
                 <div className="flex flex-col items-end shrink-0 gap-1">
-                    <span className="text-[10px] font-medium text-muted-foreground/60">{new Date(tx.date).toLocaleDateString()}</span>
+                    <span className="text-[10px] font-medium text-muted-foreground/60">{formatDate(tx.date)}</span>
                     <div className="flex gap-0.5 sm:gap-1">
                         <TransactionModal mode="icon" transaction={tx} />
                         <Button 
