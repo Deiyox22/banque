@@ -36,7 +36,7 @@ export default function TransactionForm({ onSuccess, initialData, defaultDate }:
 
   const type = watch('type');
 
-  const { data: dynamicCats = [] } = useQuery({
+  const { data: dynamicCats = {} as Record<string, string[]> } = useQuery({
       queryKey: ['all-categories'],
       queryFn: async () => {
           const supabase = createClient();
