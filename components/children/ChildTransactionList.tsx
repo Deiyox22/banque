@@ -1,5 +1,5 @@
 // components/children/ChildTransactionList.tsx
-import { formatCurrency } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -28,9 +28,7 @@ export default function ChildTransactionList({ transactions }: ChildTransactionL
             <div key={tx.id} className="flex items-center justify-between p-4 rounded-2xl bg-white/50 border border-primary/5 transition-all hover:border-primary/20 group">
               <div className="flex flex-col min-w-0 mr-3">
                 <span className="font-bold text-foreground text-sm leading-tight tracking-tight break-words">{tx.label}</span>
-                import { formatDate } from '@/lib/utils';
-// ...
-<span className="text-[10px] font-black uppercase tracking-widest text-primary/40 mt-1">{formatDate(tx.date)}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary/40 mt-1">{formatDate(tx.date)}</span>
               </div>
               <div className={cn(
                 "font-black text-sm sm:text-base shrink-0 tracking-tighter",
