@@ -160,6 +160,21 @@ export class GameState {
     return true;
   }
 
+  rentSchedule(tile: Tile): { label: string; rent: number }[] {
+    if (tile.type !== "property") return [];
+    const base = tile.rent ?? 0;
+    const multipliers = [5, 15, 30, 45, 60];
+    return [
+      { label: "Loyer de base", rent: base },
+      { label: "Groupe complet", rent: base * 2 },
+      { label: "1 maison", rent: base * multipliers[0] },
+      { label: "2 maisons", rent: base * multipliers[1] },
+      { label: "3 maisons", rent: base * multipliers[2] },
+      { label: "4 maisons", rent: base * multipliers[3] },
+      { label: "Hotel", rent: base * multipliers[4] },
+    ];
+  }
+
   computeRent(tile: Tile, diceTotal: number): number {
     if (tile.type === "property") {
       const owner = this.tileOwner(tile.id)!;

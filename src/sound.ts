@@ -1,4 +1,13 @@
 let ctx: AudioContext | null = null;
+let muted = false;
+
+export function setMuted(value: boolean) {
+  muted = value;
+}
+
+export function isMuted(): boolean {
+  return muted;
+}
 
 function getCtx(): AudioContext {
   if (!ctx) {
@@ -32,6 +41,7 @@ function tone(
 }
 
 export function playDiceSound() {
+  if (muted) return;
   const c = getCtx();
   const now = c.currentTime;
 
@@ -57,6 +67,7 @@ export function playDiceSound() {
 }
 
 export function playBuySound() {
+  if (muted) return;
   const c = getCtx();
   const now = c.currentTime;
   tone(880, now, 0.12, "sine", 0.25);
@@ -64,6 +75,7 @@ export function playBuySound() {
 }
 
 export function playVictorySound() {
+  if (muted) return;
   const c = getCtx();
   const now = c.currentTime;
   const notes = [523.25, 659.25, 783.99, 1046.5];

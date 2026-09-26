@@ -35,11 +35,38 @@ html, body {
   padding: 16px;
 }
 
+#top-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
 #players-panel {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   pointer-events: none;
+}
+
+#top-actions {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+  flex-shrink: 0;
+}
+
+#top-actions button {
+  background: rgba(10, 20, 35, 0.85);
+  color: #dfe8f5;
+  font-size: 12.5px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+#sound-toggle {
+  padding: 8px 11px;
 }
 
 .player-card {
@@ -84,6 +111,30 @@ html, body {
   margin-top: 2px;
 }
 
+.player-card .portfolio {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.player-card .portfolio .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.3) inset;
+}
+
+.player-card .status-badge {
+  display: inline-block;
+  font-size: 10px;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.15);
+  vertical-align: middle;
+}
+
 .player-card.bankrupt {
   opacity: 0.4;
   filter: grayscale(1);
@@ -117,6 +168,120 @@ html, body {
   font-size: 12.5px;
   padding: 7px 10px;
   text-align: left;
+}
+
+#camera-hint {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  font-size: 12px;
+  color: #cfd8e3;
+  background: rgba(10, 20, 35, 0.75);
+  padding: 6px 10px;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+#camera-hint.hidden {
+  opacity: 0;
+}
+
+#tile-card {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(280px, 80vw);
+  pointer-events: auto;
+  background: rgba(10, 20, 35, 0.92);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+}
+
+#tile-card.hidden {
+  display: none;
+}
+
+#tile-card .tile-card-band {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-weight: 800;
+  font-size: 13px;
+  color: #161616;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.25);
+}
+
+#tile-card .tile-card-body {
+  padding: 12px 14px 16px;
+}
+
+#tile-card .tile-card-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+#tile-card .tile-card-type {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #a8b8cc;
+  margin-bottom: 10px;
+}
+
+#tile-card .tile-card-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 3px 0;
+  color: #dfe8f5;
+}
+
+#tile-card .tile-card-row.highlight {
+  color: #ffd54a;
+  font-weight: 700;
+}
+
+#tile-card .tile-card-owner {
+  margin-top: 10px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#tile-card .tile-card-buy-btn {
+  margin-top: 12px;
+  width: 100%;
+  background: linear-gradient(180deg, #7be08a, #3fae55);
+  color: #0c2410;
+}
+
+#victory-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 10, 20, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+}
+
+#victory-modal.hidden {
+  display: none;
+}
+
+#victory-modal .modal-box {
+  text-align: center;
+}
+
+#victory-restart-btn {
+  background: linear-gradient(180deg, #ffd54a, #f4b400);
 }
 
 #turn-panel {
