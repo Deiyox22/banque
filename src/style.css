@@ -1,0 +1,233 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #0b1a2b;
+  color: #fff;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+#players-panel {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+
+.player-card {
+  pointer-events: auto;
+  background: rgba(10, 20, 35, 0.85);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 8px 12px;
+  min-width: 140px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.player-card.active {
+  border-color: #ffd54a;
+  box-shadow: 0 0 12px #ffd54a88;
+}
+
+.player-card .name {
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.player-card .swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.player-card .money {
+  font-size: 13px;
+  color: #a8f0c0;
+}
+
+.player-card .props {
+  font-size: 11px;
+  color: #cfd8e3;
+  margin-top: 2px;
+}
+
+.player-card.bankrupt {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+#turn-panel {
+  pointer-events: auto;
+  align-self: center;
+  background: rgba(10, 20, 35, 0.9);
+  border-radius: 14px;
+  padding: 14px 20px;
+  width: min(480px, 92vw);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  text-align: center;
+}
+
+#turn-info {
+  font-size: 15px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+#dice-display {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.die {
+  width: 46px;
+  height: 46px;
+  background: #fff;
+  color: #222;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  box-shadow: inset 0 0 0 2px #ccc;
+}
+
+#action-log {
+  min-height: 40px;
+  max-height: 70px;
+  overflow-y: auto;
+  font-size: 12.5px;
+  color: #dfe8f5;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+#buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  background: linear-gradient(180deg, #ffd54a, #f4b400);
+  color: #22200e;
+  transition: transform 0.1s ease, opacity 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+button.hidden {
+  display: none;
+}
+
+#end-turn-btn {
+  background: linear-gradient(180deg, #6cc3ff, #3d97e0);
+  color: #0a2036;
+}
+
+#buy-btn {
+  background: linear-gradient(180deg, #7be08a, #3fae55);
+  color: #0c2410;
+}
+
+#setup-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 10, 20, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+#setup-modal.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: #12253c;
+  padding: 32px 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.modal-box h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  color: #ffd54a;
+  letter-spacing: 1px;
+}
+
+.modal-box p {
+  margin: 0 0 20px;
+  color: #cfd8e3;
+}
+
+#player-count-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+#tile-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: none;
+  z-index: 15;
+  white-space: nowrap;
+}

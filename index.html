@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monopoly 3D</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+
+      <div id="hud">
+        <div id="players-panel"></div>
+
+        <div id="turn-panel">
+          <div id="turn-info">Au tour de <span id="current-player-name">Joueur 1</span></div>
+          <div id="dice-display">
+            <div class="die" id="die1">-</div>
+            <div class="die" id="die2">-</div>
+          </div>
+          <div id="action-log"></div>
+          <div id="buttons">
+            <button id="roll-btn">Lancer les des</button>
+            <button id="buy-btn" class="hidden">Acheter</button>
+            <button id="end-turn-btn" class="hidden">Finir le tour</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="setup-modal">
+        <div class="modal-box">
+          <h1>Monopoly 3D</h1>
+          <p>Choisissez le nombre de joueurs</p>
+          <div id="player-count-buttons">
+            <button data-count="2">2 Joueurs</button>
+            <button data-count="3">3 Joueurs</button>
+            <button data-count="4">4 Joueurs</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
