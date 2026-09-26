@@ -53,13 +53,14 @@ export class GameState {
   doublesCount = 0;
   gameOver = false;
 
-  constructor(numPlayers: number, log: LogFn) {
+  constructor(numPlayers: number, log: LogFn, roster?: { name: string; color: number }[]) {
     this.log = log;
     for (let i = 0; i < numPlayers; i++) {
+      const r = roster?.[i];
       this.players.push({
         index: i,
-        name: PLAYER_NAMES[i],
-        color: PLAYER_COLORS[i],
+        name: r?.name ?? PLAYER_NAMES[i],
+        color: r?.color ?? PLAYER_COLORS[i],
         money: START_MONEY,
         position: 0,
         properties: [],
@@ -90,7 +91,7 @@ export class GameState {
     player.position = newPos;
     if (passedGo) {
       player.money += GO_BONUS;
-      this.log(`${player.name} passe par la case Depart et recoit ${GO_BONUS} M.`);
+      this.log(`🏁 ${player.name} passe par la case Depart et recoit ${GO_BONUS} M.`);
     }
     return { passedGo, tile: BOARD[newPos] };
   }
@@ -99,7 +100,7 @@ export class GameState {
     player.position = JAIL_TILE_ID;
     player.inJail = true;
     player.jailTurns = 0;
-    this.log(`${player.name} est envoye en prison !`);
+    this.log(`🚔 ${player.name} est envoye en prison !`);
   }
 
   tileOwner(tileId: number): Player | null {
@@ -121,7 +122,7 @@ export class GameState {
     player.money -= tile.price ?? 0;
     player.properties.push(tile.id);
     this.ownership[tile.id] = player.index;
-    this.log(`${player.name} achete ${tile.name} pour ${tile.price} M.`);
+    this.log(`🏷️ ${player.name} achete ${tile.name} pour ${tile.price} M.`);
     return true;
   }
 
@@ -156,7 +157,7 @@ export class GameState {
     player.money -= this.houseCost(tile);
     const newCount = (this.houses[tile.id] ?? 0) + 1;
     this.houses[tile.id] = newCount;
-    this.log(`${player.name} construit ${newCount === 5 ? "un hotel" : "une maison"} sur ${tile.name}.`);
+    this.log(`🏠 ${player.name} construit ${newCount === 5 ? "un hotel" : "une maison"} sur ${tile.name}.`);
     return true;
   }
 
@@ -205,7 +206,7 @@ export class GameState {
     const actual = Math.min(amount, Math.max(0, payer.money));
     payer.money -= amount;
     owner.money += amount;
-    this.log(`${payer.name} paie ${amount} M de loyer a ${owner.name}.`);
+    this.log(`💰 ${payer.name} paie ${amount} M de loyer a ${owner.name}.`);
     if (payer.money < 0) {
       this.handleBankruptcy(payer, owner);
     }
@@ -223,22 +224,22 @@ export class GameState {
       }
     }
     player.properties = [];
-    this.log(`${player.name} est en faillite !`);
+    this.log(`💥 ${player.name} est en faillite !`);
     const remaining = this.activePlayers();
     if (remaining.length <= 1) {
       this.gameOver = true;
       if (remaining.length === 1) {
-        this.log(`${remaining[0].name} remporte la partie !`);
+        this.log(`🏆 ${remaining[0].name} remporte la partie !`);
       }
     }
   }
 
-  drawChance(): { text: string; type: string; amount?: number } {
-    return CHANCE_TEXTS[Math.floor(Math.random() * CHANCE_TEXTS.length)];
+  drawChance(seed: number): { text: string; type: string; amount?: number } {
+    return CHANCE_TEXTS[Math.floor(seed * CHANCE_TEXTS.length)];
   }
 
-  drawChest(): { text: string; type: string; amount?: number } {
-    return CHEST_TEXTS[Math.floor(Math.random() * CHEST_TEXTS.length)];
+  drawChest(seed: number): { text: string; type: string; amount?: number } {
+    return CHEST_TEXTS[Math.floor(seed * CHEST_TEXTS.length)];
   }
 
   applyCard(card: { text: string; type: string; amount?: number }) {
@@ -264,7 +265,7 @@ export class GameState {
   payTax(amount: number) {
     const player = this.currentPlayer;
     player.money -= amount;
-    this.log(`${player.name} paie une taxe de ${amount} M.`);
+    this.log(`💸 ${player.name} paie une taxe de ${amount} M.`);
     if (player.money < 0) this.handleBankruptcy(player, null);
   }
 
