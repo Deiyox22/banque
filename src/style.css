@@ -230,7 +230,7 @@ body::after {
 
 #board-row {
   width: 100%;
-  max-width: 900px;
+  max-width: 1020px;
   display: flex;
   gap: 16px;
   justify-content: center;
@@ -240,7 +240,7 @@ body::after {
 
 .board2d {
   position: relative;
-  width: min(640px, 92vw);
+  width: min(700px, 94vw);
   aspect-ratio: 1 / 1;
   display: grid;
   grid-template-columns: repeat(11, 1fr);
@@ -355,6 +355,7 @@ body::after {
 
 .tile2d {
   position: relative;
+  container-type: inline-size;
   background: #f6efdc;
   border-radius: 8px;
   display: flex;
@@ -396,30 +397,28 @@ body::after {
 }
 
 .tile2d-icon {
-  font-size: clamp(11px, 1.8vw, 20px);
+  font-size: clamp(9px, 32cqw, 20px);
   line-height: 1;
 }
 
 .tile2d.corner .tile2d-icon {
-  font-size: clamp(16px, 2.6vw, 28px);
+  font-size: clamp(13px, 40cqw, 28px);
 }
 
 .tile2d-name {
-  font-size: clamp(6px, 0.92vw, 9.5px);
+  font-size: clamp(4.5px, 15cqw, 9.5px);
   font-weight: 800;
   color: #2a2318;
   line-height: 1.15;
   font-family: "Baloo 2", "Manrope", sans-serif;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+  max-width: 100%;
 }
 
 .tile2d.corner .tile2d-name {
-  font-size: clamp(7.5px, 1.2vw, 12px);
-}
-
-.tile2d-price {
-  font-size: clamp(5.5px, 0.8vw, 8.5px);
-  font-weight: 700;
-  color: #6b6248;
+  font-size: clamp(5.5px, 17cqw, 11px);
 }
 
 .tile2d-marker-zone {
@@ -466,11 +465,12 @@ body::after {
   position: absolute;
   top: 0;
   left: 0;
-  width: 30px;
-  height: 30px;
-  margin-left: -15px;
-  margin-top: -15px;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  margin-top: -12px;
   transition: none;
+  z-index: 10;
 }
 
 .token2d-face {
@@ -481,9 +481,9 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
-  border: 2px solid rgba(0,0,0,0.35);
-  box-shadow: 0 3px 0 rgba(0,0,0,0.25), 0 4px 8px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.55) inset;
+  font-size: 13px;
+  border: 1.5px solid rgba(0,0,0,0.35);
+  box-shadow: 0 2px 0 rgba(0,0,0,0.25), 0 3px 6px rgba(0,0,0,0.4), 0 0 0 1.5px rgba(255,255,255,0.55) inset;
   animation: tokenIdle 2.4s ease-in-out infinite;
 }
 
