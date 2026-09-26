@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import { BOARD, GROUP_COLORS, Tile } from "./board";
 
 const TILE_SIZE = 1.8;
@@ -28,7 +30,10 @@ function makeTileTexture(tile: Tile): THREE.CanvasTexture {
   canvas.height = 256;
   const ctx = canvas.getContext("2d")!;
 
-  ctx.fillStyle = "#f2ead6";
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  bgGrad.addColorStop(0, "#faf3e2");
+  bgGrad.addColorStop(1, "#efe4c8");
+  ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const typeColors: Record<string, string> = {
@@ -44,20 +49,33 @@ function makeTileTexture(tile: Tile): THREE.CanvasTexture {
   };
 
   if (tile.group) {
-    ctx.fillStyle = `#${GROUP_COLORS[tile.group].toString(16).padStart(6, "0")}`;
+    const bandGrad = ctx.createLinearGradient(0, 0, 0, 64);
+    const hex = `#${GROUP_COLORS[tile.group].toString(16).padStart(6, "0")}`;
+    bandGrad.addColorStop(0, hex);
+    bandGrad.addColorStop(1, shadeColor(hex, -18));
+    ctx.fillStyle = bandGrad;
     ctx.fillRect(0, 0, canvas.width, 64);
+    ctx.strokeStyle = "#00000025";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(0, 62, canvas.width, 2);
   } else if (typeColors[tile.type]) {
-    ctx.fillStyle = typeColors[tile.type];
+    const bandGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    bandGrad.addColorStop(0, typeColors[tile.type]);
+    bandGrad.addColorStop(1, shadeColor(typeColors[tile.type], -15));
+    ctx.fillStyle = bandGrad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 
-  ctx.strokeStyle = "#00000030";
+  ctx.strokeStyle = "#00000035";
   ctx.lineWidth = 4;
   ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
 
-  ctx.fillStyle = tile.type === "railroad" ? "#ffffff" : "#111111";
-  ctx.font = "bold 20px Arial";
   ctx.textAlign = "center";
+  ctx.shadowColor = "rgba(0,0,0,0.35)";
+  ctx.shadowBlur = 3;
+  ctx.shadowOffsetY = 1;
+  ctx.fillStyle = tile.type === "railroad" ? "#ffffff" : "#161616";
+  ctx.font = "bold 20px Arial";
   const words = tile.name.split(" ");
   let lines: string[] = [];
   let line = "";
@@ -84,10 +102,22 @@ function makeTileTexture(tile: Tile): THREE.CanvasTexture {
     ctx.font = "bold 18px Arial";
     ctx.fillText(`${tile.taxAmount} M`, canvas.width / 2, 225);
   }
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = 0;
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.anisotropy = 4;
+  tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
+}
+
+function shadeColor(hex: string, percent: number): string {
+  const num = parseInt(hex.replace("#", ""), 16);
+  const r = Math.max(0, Math.min(255, ((num >> 16) & 0xff) + Math.round((percent / 100) * 255)));
+  const g = Math.max(0, Math.min(255, ((num >> 8) & 0xff) + Math.round((percent / 100) * 255)));
+  const b = Math.max(0, Math.min(255, (num & 0xff) + Math.round((percent / 100) * 255)));
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
 interface TokenEntry {
@@ -137,7 +167,38 @@ function makePipTexture(value: number): THREE.CanvasTexture {
   }
 
   const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
+}
+
+function makeSkyTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 8;
+  canvas.height = 256;
+  const ctx = canvas.getContext("2d")!;
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, "#1a3a5c");
+  grad.addColorStop(0.55, "#0d2038");
+  grad.addColorStop(1, "#050b16");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function makeContactShadowTexture(): THREE.CanvasTexture {
+  const size = 128;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d")!;
+  const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  grad.addColorStop(0, "rgba(0,0,0,0.45)");
+  grad.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, size, size);
+  return new THREE.CanvasTexture(canvas);
 }
 
 function quaternionForDieValue(value: number): THREE.Quaternion {
@@ -216,6 +277,17 @@ function buildTokenMesh(shape: TokenShape, color: number): THREE.Group {
   group.traverse((obj) => {
     if (obj instanceof THREE.Mesh) obj.castShadow = true;
   });
+
+  const shadowMat = new THREE.MeshBasicMaterial({
+    map: makeContactShadowTexture(),
+    transparent: true,
+    depthWrite: false,
+  });
+  const shadowBlob = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), shadowMat);
+  shadowBlob.rotation.x = -Math.PI / 2;
+  shadowBlob.position.y = 0.01;
+  group.add(shadowBlob);
+
   return group;
 }
 
@@ -231,7 +303,10 @@ export class Board3D {
   private diceSpinTime = 0;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.scene.background = new THREE.Color(0x0b1a2b);
+    const sky = makeSkyTexture();
+    sky.mapping = THREE.EquirectangularReflectionMapping;
+    this.scene.background = sky;
+    this.scene.fog = new THREE.Fog(0x0d2038, 30, 55);
 
     this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
     this.camera.position.set(0, 17, 20);
@@ -240,6 +315,13 @@ export class Board3D {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.1;
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.enableDamping = true;
@@ -256,10 +338,10 @@ export class Board3D {
   }
 
   private setupLights() {
-    const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.5);
     this.scene.add(ambient);
 
-    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    const sun = new THREE.DirectionalLight(0xfff4e0, 1.4);
     sun.position.set(12, 25, 10);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
@@ -267,11 +349,17 @@ export class Board3D {
     sun.shadow.camera.right = 25;
     sun.shadow.camera.top = 25;
     sun.shadow.camera.bottom = -25;
+    sun.shadow.radius = 3;
+    sun.shadow.bias = -0.0015;
     this.scene.add(sun);
 
-    const fill = new THREE.PointLight(0xffe9b0, 0.4);
+    const fill = new THREE.PointLight(0xffe9b0, 0.5);
     fill.position.set(-10, 10, -10);
     this.scene.add(fill);
+
+    const rim = new THREE.PointLight(0x8fc7ff, 0.35);
+    rim.position.set(6, 8, -14);
+    this.scene.add(rim);
   }
 
   private buildBoard() {
@@ -297,6 +385,7 @@ export class Board3D {
     lctx.font = "bold 26px Arial";
     lctx.fillText("3D EDITION", 0, 60);
     const logoTex = new THREE.CanvasTexture(logoCanvas);
+    logoTex.colorSpace = THREE.SRGBColorSpace;
     const logoMat = new THREE.MeshStandardMaterial({ map: logoTex });
     const logoGeo = new THREE.PlaneGeometry(BOARD_HALF * 1.1, BOARD_HALF * 1.1);
     const logoMesh = new THREE.Mesh(logoGeo, logoMat);
@@ -341,8 +430,10 @@ export class Board3D {
   private buildDice() {
     const pipTextures = DIE_FACE_VALUES.map((v) => makePipTexture(v));
     for (let i = 0; i < 2; i++) {
-      const geo = new THREE.BoxGeometry(0.9, 0.9, 0.9);
-      const mats = pipTextures.map((tex) => new THREE.MeshStandardMaterial({ map: tex, roughness: 0.4 }));
+      const geo = new RoundedBoxGeometry(0.9, 0.9, 0.9, 4, 0.12);
+      const mats = pipTextures.map(
+        (tex) => new THREE.MeshStandardMaterial({ map: tex, roughness: 0.25, metalness: 0.05 })
+      );
       const die = new THREE.Mesh(geo, mats);
       die.castShadow = true;
       die.position.set(i === 0 ? -0.7 : 0.7, 4, 0);
