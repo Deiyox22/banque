@@ -14,9 +14,23 @@ const TYPE_ICONS: Record<string, string> = {
 
 const TOKEN_EMOJI = ["🎩", "🚗", "🐶", "👢"];
 
+const SHORT_TILE_NAMES: Record<number, string> = {
+  10: "Prison",
+  5: "Montparnasse",
+  15: "Gare de Lyon",
+  25: "Gare du Nord",
+  35: "Saint-Lazare",
+  12: "Electricite",
+  28: "Eaux",
+};
+
 function iconFor(tile: Tile): string {
   if (tile.type === "utility" && tile.name.toLowerCase().includes("eau")) return "🚰";
   return TYPE_ICONS[tile.type] ?? "";
+}
+
+function displayName(tile: Tile): string {
+  return SHORT_TILE_NAMES[tile.id] ?? tile.name;
 }
 
 function tileGridPosition(id: number): { col: number; row: number } {
@@ -114,14 +128,12 @@ export class Board2D {
     }
 
     const icon = iconFor(tile);
-    const price = tile.price ? `${tile.price} M` : tile.taxAmount ? `${tile.taxAmount} M` : "";
 
     el.innerHTML = `
       ${tile.group ? '<div class="tile2d-band"></div>' : ""}
       <div class="tile2d-body">
         ${icon ? `<div class="tile2d-icon">${icon}</div>` : ""}
-        <div class="tile2d-name">${tile.name}</div>
-        ${price ? `<div class="tile2d-price">${price}</div>` : ""}
+        <div class="tile2d-name">${displayName(tile)}</div>
       </div>
       <div class="tile2d-marker-zone"></div>
     `;
@@ -136,15 +148,24 @@ export class Board2D {
   }
 
   private tokenOffset(playerIndex: number): { dx: number; dy: number } {
-    const angle = (playerIndex / 4) * Math.PI * 2;
-    return { dx: Math.cos(angle) * 10, dy: Math.sin(angle) * 10 };
+    const positions = [
+      { dx: -8, dy: -8 },
+      { dx: 8, dy: -8 },
+      { dx: -8, dy: 8 },
+      { dx: 8, dy: 8 },
+    ];
+    return positions[playerIndex % positions.length];
   }
 
   createToken(playerIndex: number, color: number) {
     const el = document.createElement("div");
     el.className = "token2d";
-    el.style.setProperty("--token-color", hex(color));
-    el.textContent = TOKEN_EMOJI[playerIndex % TOKEN_EMOJI.length];
+    const face = document.createElement("div");
+    face.className = "token2d-face";
+    face.style.setProperty("--token-color", hex(color));
+    face.textContent = TOKEN_EMOJI[playerIndex % TOKEN_EMOJI.length];
+    face.style.animationDelay = `-${playerIndex * 0.4}s`;
+    el.appendChild(face);
     this.tokenLayer.appendChild(el);
 
     const center = this.tileCenter(0);
