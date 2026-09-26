@@ -143,8 +143,12 @@ export class Board2D {
   createToken(playerIndex: number, color: number) {
     const el = document.createElement("div");
     el.className = "token2d";
-    el.style.setProperty("--token-color", hex(color));
-    el.textContent = TOKEN_EMOJI[playerIndex % TOKEN_EMOJI.length];
+    const face = document.createElement("div");
+    face.className = "token2d-face";
+    face.style.setProperty("--token-color", hex(color));
+    face.textContent = TOKEN_EMOJI[playerIndex % TOKEN_EMOJI.length];
+    face.style.animationDelay = `-${playerIndex * 0.4}s`;
+    el.appendChild(face);
     this.tokenLayer.appendChild(el);
 
     const center = this.tileCenter(0);
