@@ -89,6 +89,36 @@ html, body {
   filter: grayscale(1);
 }
 
+#build-panel {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+#build-panel.hidden {
+  display: none;
+}
+
+#build-panel .build-title {
+  font-size: 12px;
+  color: #cfd8e3;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#build-panel button {
+  background: linear-gradient(180deg, #a8f0c0, #4fbf7a);
+  color: #0c2410;
+  font-size: 12.5px;
+  padding: 7px 10px;
+  text-align: left;
+}
+
 #turn-panel {
   pointer-events: auto;
   align-self: center;

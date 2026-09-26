@@ -298,6 +298,7 @@ export class Board3D {
   controls: OrbitControls;
   tokens: TokenEntry[] = [];
   ownershipMarkers: Map<number, THREE.Mesh> = new Map();
+  houseMeshes: Map<number, THREE.Group> = new Map();
   dice: THREE.Mesh[] = [];
   private diceSpinning = false;
   private diceSpinTime = 0;
@@ -542,6 +543,64 @@ export class Board3D {
     } else {
       (marker.material as THREE.MeshStandardMaterial).color.setHex(color);
     }
+  }
+
+  updateHouses(tileId: number, count: number) {
+    const existing = this.houseMeshes.get(tileId);
+    if (existing) {
+      this.scene.remove(existing);
+      existing.traverse((obj) => {
+        if (obj instanceof THREE.Mesh) {
+          obj.geometry.dispose();
+        }
+      });
+      this.houseMeshes.delete(tileId);
+    }
+    if (count <= 0) return;
+
+    const pos = tileWorldPos(tileId);
+    const toCenter = new THREE.Vector3(-pos.x, 0, -pos.z).normalize();
+    const inward = new THREE.Vector3(pos.x, 0, pos.z).add(toCenter.clone().multiplyScalar(TILE_SIZE * 0.32));
+    const perp = new THREE.Vector3(-toCenter.z, 0, toCenter.x);
+
+    const group = new THREE.Group();
+
+    if (count >= 5) {
+      const hotelMat = new THREE.MeshStandardMaterial({ color: 0xc0392b, roughness: 0.45, metalness: 0.1 });
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.4, 0.4), hotelMat);
+      body.position.set(inward.x, TILE_HEIGHT + 0.2, inward.z);
+      body.castShadow = true;
+      body.receiveShadow = true;
+      group.add(body);
+    } else {
+      const houseMat = new THREE.MeshStandardMaterial({ color: 0x2e8b45, roughness: 0.6 });
+      const roofMat = new THREE.MeshStandardMaterial({ color: 0xa83232, roughness: 0.55 });
+      for (let i = 0; i < count; i++) {
+        const houseGroup = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.15, 0.2), houseMat);
+        body.position.y = 0.075;
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.14, 4), roofMat);
+        roof.rotation.y = Math.PI / 4;
+        roof.position.y = 0.15 + 0.07;
+        houseGroup.add(body, roof);
+        houseGroup.traverse((obj) => {
+          if (obj instanceof THREE.Mesh) {
+            obj.castShadow = true;
+            obj.receiveShadow = true;
+          }
+        });
+        const spread = (i - (count - 1) / 2) * 0.24;
+        houseGroup.position.set(
+          inward.x + perp.x * spread,
+          TILE_HEIGHT,
+          inward.z + perp.z * spread
+        );
+        group.add(houseGroup);
+      }
+    }
+
+    this.scene.add(group);
+    this.houseMeshes.set(tileId, group);
   }
 
   private onResize() {

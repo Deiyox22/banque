@@ -48,6 +48,7 @@ export class GameState {
   players: Player[] = [];
   currentPlayerIndex = 0;
   ownership: Record<number, number> = {}; // tileId -> playerIndex
+  houses: Record<number, number> = {}; // tileId -> 0-4 houses, 5 = hotel
   log: LogFn;
   doublesCount = 0;
   gameOver = false;
@@ -136,12 +137,40 @@ export class GameState {
     return BOARD.filter((t) => t.type === "utility").filter((t) => this.ownership[t.id] === player.index).length;
   }
 
+  houseCost(tile: Tile): number {
+    return Math.round(((tile.price ?? 0) / 2) / 10) * 10;
+  }
+
+  canBuildHouse(player: Player, tile: Tile): boolean {
+    if (tile.type !== "property" || !tile.group) return false;
+    if (this.ownership[tile.id] !== player.index) return false;
+    if (!playerOwnsGroup(this, player, tile.group)) return false;
+    const current = this.houses[tile.id] ?? 0;
+    if (current >= 5) return false;
+    if (player.money < this.houseCost(tile)) return false;
+    return true;
+  }
+
+  buildHouse(player: Player, tile: Tile): boolean {
+    if (!this.canBuildHouse(player, tile)) return false;
+    player.money -= this.houseCost(tile);
+    const newCount = (this.houses[tile.id] ?? 0) + 1;
+    this.houses[tile.id] = newCount;
+    this.log(`${player.name} construit ${newCount === 5 ? "un hotel" : "une maison"} sur ${tile.name}.`);
+    return true;
+  }
+
   computeRent(tile: Tile, diceTotal: number): number {
     if (tile.type === "property") {
       const owner = this.tileOwner(tile.id)!;
+      const base = tile.rent ?? 0;
+      const houseCount = this.houses[tile.id] ?? 0;
+      if (houseCount > 0) {
+        const multipliers = [5, 15, 30, 45, 60];
+        return base * multipliers[houseCount - 1];
+      }
       const groupSize = BOARD.filter((t) => t.group === tile.group).length;
       const owned = this.countGroupOwned(owner, tile.group!);
-      const base = tile.rent ?? 0;
       return owned === groupSize ? base * 2 : base;
     }
     if (tile.type === "railroad") {
@@ -172,6 +201,7 @@ export class GameState {
     player.bankrupt = true;
     for (const tileId of player.properties) {
       delete this.ownership[tileId];
+      delete this.houses[tileId];
       if (creditor) {
         this.ownership[tileId] = creditor.index;
         creditor.properties.push(tileId);

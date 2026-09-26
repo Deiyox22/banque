@@ -2,6 +2,7 @@ import "./style.css";
 import { BOARD, BOARD_SIZE, JAIL_TILE_ID, GO_TO_JAIL_TILE_ID } from "./board";
 import { GameState, Player } from "./game";
 import { Board3D, computePathBetween } from "./scene";
+import { playDiceSound, playBuySound, playVictorySound } from "./sound";
 
 const canvas = document.getElementById("scene") as HTMLCanvasElement;
 const setupModal = document.getElementById("setup-modal")!;
@@ -14,10 +15,12 @@ const actionLogEl = document.getElementById("action-log")!;
 const rollBtn = document.getElementById("roll-btn") as HTMLButtonElement;
 const buyBtn = document.getElementById("buy-btn") as HTMLButtonElement;
 const endTurnBtn = document.getElementById("end-turn-btn") as HTMLButtonElement;
+const buildPanel = document.getElementById("build-panel") as HTMLDivElement;
 
 let board3D: Board3D | null = null;
 let game: GameState | null = null;
 let awaitingBuyDecision = false;
+let victoryAnnounced = false;
 
 function log(msg: string) {
   const div = document.createElement("div");
@@ -41,6 +44,39 @@ function renderPlayersPanel() {
     playersPanel.appendChild(card);
   }
   currentPlayerNameEl.textContent = game.currentPlayer.name;
+}
+
+function renderBuildPanel() {
+  if (!game) return;
+  const player = game.currentPlayer;
+  const buildable = BOARD.filter((t) => game!.canBuildHouse(player, t));
+  buildPanel.innerHTML = "";
+  if (buildable.length === 0) {
+    buildPanel.classList.add("hidden");
+    return;
+  }
+  buildPanel.classList.remove("hidden");
+  const title = document.createElement("div");
+  title.className = "build-title";
+  title.textContent = "Construire";
+  buildPanel.appendChild(title);
+  for (const tile of buildable) {
+    const cost = game.houseCost(tile);
+    const current = game.houses[tile.id] ?? 0;
+    const label = current === 4 ? "hotel" : "maison";
+    const btn = document.createElement("button");
+    btn.textContent = `${tile.name} : +1 ${label} (${cost} M)`;
+    btn.addEventListener("click", () => {
+      if (!game || !board3D) return;
+      if (game.buildHouse(player, tile)) {
+        playBuySound();
+        board3D.updateHouses(tile.id, game.houses[tile.id] ?? 0);
+        renderPlayersPanel();
+        renderBuildPanel();
+      }
+    });
+    buildPanel.appendChild(btn);
+  }
 }
 
 function setButtonsForRollPhase() {
@@ -68,6 +104,7 @@ async function handleRoll() {
   const [d1, d2] = game.rollDice();
   die1El.textContent = "?";
   die2El.textContent = "?";
+  playDiceSound();
 
   board3D.rollDiceAnimation([d1, d2], async () => {
     die1El.textContent = String(d1);
@@ -95,6 +132,7 @@ async function resolveMove(d1: number, d2: number) {
       } else {
         log(`${player.name} reste en prison (tentative ${player.jailTurns}/3).`);
         renderPlayersPanel();
+        renderBuildPanel();
         setButtonsForPostMove(false);
         return;
       }
@@ -129,6 +167,7 @@ async function resolveMove(d1: number, d2: number) {
       if (game.canBuy(finalTile)) {
         setButtonsForPostMove(true);
         renderPlayersPanel();
+        renderBuildPanel();
         checkGameOver();
         return;
       }
@@ -139,6 +178,7 @@ async function resolveMove(d1: number, d2: number) {
   }
 
   renderPlayersPanel();
+  renderBuildPanel();
   updateOwnershipMarkers();
   checkGameOver();
   if (game.gameOver) return;
@@ -171,23 +211,30 @@ function checkGameOver() {
     setButtonsForRollPhase();
     rollBtn.disabled = true;
     log("Partie terminee ! Rechargez la page pour rejouer.");
+    if (!victoryAnnounced) {
+      victoryAnnounced = true;
+      playVictorySound();
+    }
   }
 }
 
 function handleBuy() {
   if (!game) return;
   const bought = game.buyCurrentTile();
-  renderPlayersPanel();
-  updateOwnershipMarkers();
   if (bought) {
+    playBuySound();
     buyBtn.classList.add("hidden");
   }
+  renderPlayersPanel();
+  renderBuildPanel();
+  updateOwnershipMarkers();
 }
 
 function handleEndTurn() {
   if (!game) return;
   game.nextTurn();
   renderPlayersPanel();
+  renderBuildPanel();
   if (!game.gameOver) {
     setButtonsForRollPhase();
   }
@@ -201,6 +248,7 @@ function startGame(numPlayers: number) {
     board3D.createToken(p.index, p.color);
   }
   renderPlayersPanel();
+  renderBuildPanel();
   setButtonsForRollPhase();
   animate();
 }
