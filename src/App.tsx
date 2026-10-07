@@ -10,8 +10,12 @@ import { Maquettes } from './pages/Maquettes';
 import { Messages } from './pages/Messages';
 import { Statistiques } from './pages/Statistiques';
 import { Parametres } from './pages/Parametres';
+import { VoirMaquette } from './pages/VoirMaquette';
 
-function AppRoutes() {
+// /voir est publique (un prospect externe l'ouvre depuis un message reçu,
+// sans compte) : elle doit rester accessible même sans session, donc hors
+// de la logique d'authentification ci-dessous.
+function AppAuthentifiee() {
   const { session, loading } = useSession();
 
   if (loading) {
@@ -27,26 +31,29 @@ function AppRoutes() {
   }
 
   return (
-    <BrowserRouter>
-      <AppShell>
-        <Routes>
-          <Route path="/" element={<Aujourdhui />} />
-          <Route path="/pipeline" element={<Pipeline />} />
-          <Route path="/prospects/:id" element={<FicheProspect />} />
-          <Route path="/maquettes" element={<Maquettes />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/statistiques" element={<Statistiques />} />
-          <Route path="/parametres" element={<Parametres />} />
-        </Routes>
-      </AppShell>
-    </BrowserRouter>
+    <AppShell>
+      <Routes>
+        <Route path="/" element={<Aujourdhui />} />
+        <Route path="/pipeline" element={<Pipeline />} />
+        <Route path="/prospects/:id" element={<FicheProspect />} />
+        <Route path="/maquettes" element={<Maquettes />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/statistiques" element={<Statistiques />} />
+        <Route path="/parametres" element={<Parametres />} />
+      </Routes>
+    </AppShell>
   );
 }
 
 export function App() {
   return (
     <ThemeProvider>
-      <AppRoutes />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/voir" element={<VoirMaquette />} />
+          <Route path="/*" element={<AppAuthentifiee />} />
+        </Routes>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

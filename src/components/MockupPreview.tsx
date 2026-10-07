@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMockupHtml } from '../lib/useMockupHtml';
+import { lienAffichageMaquette } from '../lib/mockupViewerUrl';
 
 type Taille = 'mobile' | 'ordinateur';
 
@@ -32,7 +33,7 @@ export function MockupPreview({ storagePath }: { storagePath: string }) {
         </div>
         {url && (
           <a
-            href={url}
+            href={lienAffichageMaquette(url)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"

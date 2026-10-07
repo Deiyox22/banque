@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTemplates } from '../lib/useTemplates';
 import { remplirTemplate } from '../lib/templates';
 import { supabase } from '../lib/supabase';
+import { lienAffichageMaquette } from '../lib/mockupViewerUrl';
 import type { SaisieActivite } from '../lib/useActivities';
 import type { Mockup, Prospect } from '../types/database';
 
@@ -56,7 +57,11 @@ export function PreparerMessage({
         setErreur("Impossible de générer le lien de la maquette.");
         return;
       }
-      lienMaquette = data.signedUrl;
+      // On partage un lien vers notre propre page /voir, jamais l'URL
+      // Supabase brute : Storage sert les fichiers HTML en text/plain
+      // (protection anti-XSS de la plateforme), illisible pour le client
+      // s'il l'ouvrait directement.
+      lienMaquette = lienAffichageMaquette(data.signedUrl);
     }
 
     const rempli = remplirTemplate(modele.corps, {

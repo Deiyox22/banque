@@ -1,6 +1,7 @@
 import type { ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useMockupHtml } from '../lib/useMockupHtml';
+import { lienAffichageMaquette } from '../lib/mockupViewerUrl';
 import { MockupThumbnail } from './MockupThumbnail';
 import { StatutBadge } from './StatutBadge';
 import { formatDate } from '../lib/formatDate';
@@ -33,7 +34,7 @@ export function MaquetteCard({
           </Link>
           {url && (
             <a
-              href={url}
+              href={lienAffichageMaquette(url)}
               target="_blank"
               rel="noopener noreferrer"
               className="shrink-0 text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"
