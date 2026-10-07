@@ -25,6 +25,69 @@ function requireEnv(name: string): string {
   return value;
 }
 
+const PHRASE_DESINSCRIPTION = 'Répondez STOP si vous ne souhaitez plus recevoir de messages de ma part.';
+
+// Modèles prêts à l'emploi pour le premier envoi et la relance, sur les deux
+// canaux. On ne les écrase jamais si Anthony les a déjà modifiés : on ne crée
+// que ceux qui manquent (cf. "idempotent, relançable sans doublons").
+const DEFAULT_TEMPLATES: Array<{ nom: string; canal: 'sms' | 'mail'; objet: string | null; corps: string }> = [
+  {
+    nom: 'Premier contact — SMS',
+    canal: 'sms',
+    objet: null,
+    corps:
+      "Bonjour, je vous ai préparé une proposition de site pour {{nom}} : {{lien_maquette}}\n" +
+      "Dites-moi ce que vous en pensez !\n{{ma_signature}}",
+  },
+  {
+    nom: 'Premier contact — Mail',
+    canal: 'mail',
+    objet: 'Votre proposition de site internet',
+    corps:
+      'Bonjour {{nom}},\n\n' +
+      "Je me permets de vous contacter car j'ai préparé une proposition de site internet pour votre activité ({{activité}}).\n\n" +
+      'Vous pouvez la consulter ici : {{lien_maquette}}\n\n' +
+      "N'hésitez pas à me faire part de vos retours, je reste disponible pour en discuter.\n\n" +
+      `{{ma_signature}}\n\n${PHRASE_DESINSCRIPTION}`,
+  },
+  {
+    nom: 'Relance — SMS',
+    canal: 'sms',
+    objet: null,
+    corps:
+      'Bonjour {{nom}}, je reviens vers vous au sujet de la proposition de site que je vous avais envoyée ({{lien_maquette}}). ' +
+      "Avez-vous eu l'occasion d'y jeter un œil ?\n{{ma_signature}}",
+  },
+  {
+    nom: 'Relance — Mail',
+    canal: 'mail',
+    objet: 'Relance — votre proposition de site internet',
+    corps:
+      'Bonjour {{nom}},\n\n' +
+      'Je me permets de revenir vers vous au sujet de la proposition de site internet que je vous avais transmise : {{lien_maquette}}\n\n' +
+      "Si vous avez des questions ou souhaitez en discuter, n'hésitez pas à me contacter.\n\n" +
+      `{{ma_signature}}\n\n${PHRASE_DESINSCRIPTION}`,
+  },
+];
+
+async function seedTemplates(supabase: ReturnType<typeof createClient>, userId: string) {
+  const { data: existants, error: lookupError } = await supabase
+    .from('templates')
+    .select('nom')
+    .eq('user_id', userId);
+  if (lookupError) throw lookupError;
+
+  const nomsExistants = new Set((existants ?? []).map((t) => t.nom));
+  const aCreer = DEFAULT_TEMPLATES.filter((t) => !nomsExistants.has(t.nom));
+  if (aCreer.length === 0) return 0;
+
+  const { error: insertError } = await supabase
+    .from('templates')
+    .insert(aCreer.map((t) => ({ ...t, user_id: userId })));
+  if (insertError) throw insertError;
+  return aCreer.length;
+}
+
 async function main() {
   const supabaseUrl = requireEnv('SUPABASE_URL');
   const serviceRoleKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
@@ -153,10 +216,13 @@ async function main() {
     }
   }
 
+  const templatesCreated = await seedTemplates(supabase, userId);
+
   console.log(
     `Terminé : ${created} prospect(s) créé(s), ${updated} mis à jour, ` +
       `${mockupsCreated} maquette(s) créée(s), ${mockupsUpdated} mise(s) à jour, ` +
-      `${mockupsIgnores} ignorée(s) (fichier manquant).`
+      `${mockupsIgnores} ignorée(s) (fichier manquant), ` +
+      `${templatesCreated} modèle(s) de message créé(s).`
   );
 }
 
