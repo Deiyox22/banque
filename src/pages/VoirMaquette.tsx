@@ -1,41 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useMockupHtml } from '../lib/useMockupHtml';
 
 // Page publique (pas d'authentification requise) : c'est elle que le lien
-// {{lien_maquette}} partagé avec un prospect pointe réellement, plutôt que
-// l'URL Supabase brute (voir src/lib/mockupViewerUrl.ts). On récupère le
-// contenu nous-mêmes via `fetch` puis on l'injecte en `srcdoc` — Supabase
-// Storage sert ce fichier en text/plain avec une CSP verrouillée, ce qui
-// empêcherait son rendu si l'iframe pointait directement sur l'URL signée.
+// {{lien_maquette}} partagé avec un prospect pointe réellement (voir
+// src/lib/mockupViewerUrl.ts), via l'Edge Function `voir-maquette` qui sert
+// le contenu avec les bons en-têtes.
 export function VoirMaquette() {
-  const [searchParams] = useSearchParams();
-  const url = searchParams.get('u');
-  const [html, setHtml] = useState<string | null>(null);
-  const [erreur, setErreur] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!url) {
-      setErreur('Lien invalide.');
-      return;
-    }
-
-    let active = true;
-    fetch(url)
-      .then((reponse) => {
-        if (!reponse.ok) throw new Error();
-        return reponse.text();
-      })
-      .then((texte) => {
-        if (active) setHtml(texte);
-      })
-      .catch(() => {
-        if (active) setErreur('Ce lien a expiré ou est invalide. Demandez un nouveau lien à votre contact.');
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [url]);
+  const { id } = useParams<{ id: string }>();
+  const { html, error } = useMockupHtml(id ?? '');
+  const erreur = !id ? 'Lien invalide.' : error ? 'Ce lien est invalide. Demandez un nouveau lien à votre contact.' : null;
 
   if (erreur) {
     return (

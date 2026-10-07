@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import { useTemplates } from '../lib/useTemplates';
 import { remplirTemplate } from '../lib/templates';
-import { supabase } from '../lib/supabase';
 import { lienAffichageMaquette } from '../lib/mockupViewerUrl';
 import type { SaisieActivite } from '../lib/useActivities';
 import type { Mockup, Prospect } from '../types/database';
-
-// Le lien n'est jamais stocké en base (voir CLAUDE.md) : il est régénéré à
-// chaque préparation de message, avec une durée de vie assez longue pour que
-// le prospect ait le temps d'ouvrir le message et de cliquer.
-const EXPIRATION_LIEN_MAQUETTE_SECONDES = 7 * 24 * 3600;
 
 export function PreparerMessage({
   prospect,
@@ -25,14 +19,14 @@ export function PreparerMessage({
   const { templates, loading: templatesLoading } = useTemplates();
   const [templateId, setTemplateId] = useState('');
   const [texte, setTexte] = useState('');
-  const [statut, setStatut] = useState<'idle' | 'génération' | 'prêt' | 'erreur'>('idle');
+  const [statut, setStatut] = useState<'idle' | 'prêt'>('idle');
   const [erreur, setErreur] = useState<string | null>(null);
   const [copie, setCopie] = useState(false);
   const [enregistre, setEnregistre] = useState(false);
 
   const template = templates.find((t) => t.id === templateId) ?? null;
 
-  async function genererTexte(id: string) {
+  function genererTexte(id: string) {
     setTemplateId(id);
     setCopie(false);
     setEnregistre(false);
@@ -45,29 +39,10 @@ export function PreparerMessage({
       return;
     }
 
-    setStatut('génération');
-
-    let lienMaquette = '';
-    if (mockup) {
-      const { data, error: signError } = await supabase.storage
-        .from('mockups')
-        .createSignedUrl(mockup.storage_path, EXPIRATION_LIEN_MAQUETTE_SECONDES);
-      if (signError || !data) {
-        setStatut('erreur');
-        setErreur("Impossible de générer le lien de la maquette.");
-        return;
-      }
-      // On partage un lien vers notre propre page /voir, jamais l'URL
-      // Supabase brute : Storage sert les fichiers HTML en text/plain
-      // (protection anti-XSS de la plateforme), illisible pour le client
-      // s'il l'ouvrait directement.
-      lienMaquette = lienAffichageMaquette(data.signedUrl);
-    }
-
     const rempli = remplirTemplate(modele.corps, {
       nom: prospect.nom,
       activité: prospect.activite,
-      lien_maquette: lienMaquette,
+      lien_maquette: mockup ? lienAffichageMaquette(mockup.id) : '',
       ma_signature: signature,
     });
 
@@ -113,10 +88,6 @@ export function PreparerMessage({
           ))}
         </select>
       </label>
-
-      {statut === 'génération' && (
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Préparation du message…</p>
-      )}
 
       {erreur && (
         <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">

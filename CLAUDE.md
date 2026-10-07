@@ -5,7 +5,7 @@ Dashboard de suivi de prospects pour ELS Tech (Anthony, Loudéac). Voir `PRD.md`
 ## Stack
 
 - React 18, Vite, TypeScript (strict), Tailwind CSS.
-- Supabase : Postgres + Auth (e-mail + mot de passe) + Storage (bucket privé `mockups`).
+- Supabase : Postgres + Auth (e-mail + mot de passe) + Storage (bucket privé `mockups`) + une Edge Function (`supabase/functions/voir-maquette`) qui sert le contenu d'une maquette à un prospect sans authentification, via l'id du mockup (lien court `/voir/:id`, jamais une URL signée brute — voir le commentaire en tête du fichier).
 - Déploiement Vercel.
 - TanStack Table pour la vue tableau du pipeline, dnd-kit pour le Kanban, vite-plugin-pwa pour le manifest/service worker (installation en PWA). Pas d'autre dépendance lourde (pas de Redux, pas de UI kit complet) : des composants simples, un rôle par composant.
 - Tests : Vitest.
