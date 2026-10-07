@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useSession } from './lib/useSession';
 import { Login } from './pages/Login';
 import { AppShell } from './components/AppShell';
+import { Aujourdhui } from './pages/Aujourdhui';
 import { Pipeline } from './pages/Pipeline';
 import { FicheProspect } from './pages/FicheProspect';
 import { Maquettes } from './pages/Maquettes';
@@ -25,7 +26,8 @@ export function App() {
     <BrowserRouter>
       <AppShell>
         <Routes>
-          <Route path="/" element={<Pipeline />} />
+          <Route path="/" element={<Aujourdhui />} />
+          <Route path="/pipeline" element={<Pipeline />} />
           <Route path="/prospects/:id" element={<FicheProspect />} />
           <Route path="/maquettes" element={<Maquettes />} />
         </Routes>
