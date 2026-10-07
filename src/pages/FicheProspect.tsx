@@ -9,6 +9,7 @@ import { MockupPreview } from '../components/MockupPreview';
 import { ActiviteForm } from '../components/ActiviteForm';
 import { JournalActivites } from '../components/JournalActivites';
 import { PreparerMessage } from '../components/PreparerMessage';
+import { analyserTelephone, lienRechercheFacebook } from '../lib/contact';
 import { formatDate, toDateInputValue } from '../lib/formatDate';
 import type { StatutProspect } from '../types/database';
 
@@ -64,6 +65,8 @@ export function FicheProspect() {
     );
   }
 
+  const contact = analyserTelephone(prospect.telephone, prospect.nom);
+
   return (
     <div className="mx-auto max-w-2xl">
       <Link to="/pipeline" className="text-sm font-medium text-sky-600 hover:underline dark:text-sky-400">
@@ -98,21 +101,32 @@ export function FicheProspect() {
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
-        {prospect.telephone && (
+        {contact.viaFacebook ? (
           <a
-            href={`tel:${prospect.telephone.replace(/\s+/g, '')}`}
+            href={lienRechercheFacebook(contact.nomFacebook!)}
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
           >
-            📞 Appeler
+            📘 Facebook
           </a>
-        )}
-        {prospect.telephone && (
-          <a
-            href={`sms:${prospect.telephone.replace(/\s+/g, '')}`}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
-          >
-            💬 SMS
-          </a>
+        ) : (
+          prospect.telephone && (
+            <>
+              <a
+                href={`tel:${prospect.telephone.replace(/\s+/g, '')}`}
+                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
+              >
+                📞 Appeler
+              </a>
+              <a
+                href={`sms:${prospect.telephone.replace(/\s+/g, '')}`}
+                className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
+              >
+                💬 SMS
+              </a>
+            </>
+          )
         )}
         {prospect.email && (
           <a
