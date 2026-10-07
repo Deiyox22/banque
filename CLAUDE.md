@@ -7,8 +7,9 @@ Dashboard de suivi de prospects pour ELS Tech (Anthony, Loudéac). Voir `PRD.md`
 - React 18, Vite, TypeScript (strict), Tailwind CSS.
 - Supabase : Postgres + Auth (e-mail + mot de passe) + Storage (bucket privé `mockups`).
 - Déploiement Vercel.
-- TanStack Table pour la vue tableau du pipeline, dnd-kit pour le Kanban. Pas d'autre dépendance lourde (pas de Redux, pas de UI kit complet) : des composants simples, un rôle par composant.
+- TanStack Table pour la vue tableau du pipeline, dnd-kit pour le Kanban, vite-plugin-pwa pour le manifest/service worker (installation en PWA). Pas d'autre dépendance lourde (pas de Redux, pas de UI kit complet) : des composants simples, un rôle par composant.
 - Tests : Vitest.
+- PWA installable (manifest + service worker) mais **pas hors-ligne** : l'app dépend entièrement de Supabase à l'exécution, seule la coquille applicative (JS/CSS/icônes) est précachée. Aucune règle de cache sur les appels Supabase (toujours réseau).
 
 ## Structure de dossiers
 
