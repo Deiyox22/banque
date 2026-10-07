@@ -1,15 +1,39 @@
 {
-  "name": "monopoly-3d",
+  "name": "els-tech-prospects",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "seed": "tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@supabase/supabase-js": "^2.117.2",
+    "@tanstack/react-table": "^9.2.6",
+    "react": "^18.3.1",
+    "react-router-dom": "^7.18.4",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "typescript": "^5.4.0",
-    "vite": "^5.2.0"
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.4",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^6.1.2",
+    "dotenv": "^18.0.6",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3",
+    "xlsx": "^0.18.5"
   }
 }

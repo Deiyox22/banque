@@ -1,36 +1,65 @@
-# Monopoly 3D
+# Suivi prospects — ELS Tech
 
-Un jeu de Monopoly jouable en 3D dans le navigateur, construit avec [Three.js](https://threejs.org/) et [Vite](https://vitejs.dev/).
+Tableau de bord personnel pour suivre la prospection de TPE locales (maquettes de sites envoyées, relances, réponses). Voir `PRD.md` pour le produit et `ROADMAP.md` pour l'avancement.
 
-## Fonctionnalites
+## Stack
 
-- Plateau 3D complet (40 cases) avec camera orbitale (rotation/zoom a la souris)
-- 2 a 4 joueurs sur le meme ecran, tour par tour
-- Lancer de des anime, deplacement des pions case par case
-- Achat de proprietes, gares et compagnies
-- Loyers automatiques (avec bonus monopole sur un groupe complet)
-- Cases Chance / Caisse de communaute, impots, prison, parc gratuit
-- Faillite et victoire du dernier joueur solvable
+React 18 + Vite + TypeScript + Tailwind CSS · Supabase (Postgres, Auth, Storage) · Vercel.
 
-## Lancer le projet
+## Installation
 
 ```bash
 npm install
-npm run dev
+cp .env.example .env
 ```
 
-Puis ouvrez l'URL affichee (par defaut http://localhost:5173).
+Renseignez `.env` (jamais commité) :
 
-## Build de production
+| Variable | Où la trouver |
+|---|---|
+| `VITE_SUPABASE_URL` | Dashboard Supabase → Project Settings → API |
+| `VITE_SUPABASE_ANON_KEY` | idem, clé `anon` / `public` |
+| `SUPABASE_URL` | identique à `VITE_SUPABASE_URL` |
+| `SUPABASE_SERVICE_ROLE_KEY` | idem, clé `service_role` — **jamais** dans le code ni côté client |
+| `SEED_USER_ID` | UUID de votre compte, visible dans Authentication → Users une fois connecté au moins une fois |
+
+## Base de données
+
+Le schéma complet (tables + RLS + bucket Storage) est dans `supabase/migrations/20261007000000_init.sql` (copie lisible dans `supabase/schema.sql`).
+
+**Avec la CLI Supabase** (recommandé) :
 
 ```bash
-npm run build
-npm run preview
+supabase link --project-ref <votre-ref-de-projet>
+supabase db push
 ```
 
-## Structure
+**Sans la CLI** : collez le contenu de `supabase/schema.sql` dans l'éditeur SQL du dashboard Supabase et exécutez-le.
 
-- `src/board.ts` - donnees du plateau (cases, prix, loyers, groupes de couleur)
-- `src/game.ts` - logique de jeu (etat des joueurs, achats, loyers, faillite)
-- `src/scene.ts` - rendu 3D (Three.js) du plateau, pions et des
-- `src/main.ts` - boucle de jeu et liaison UI / logique / rendu
+Avant la première connexion : aucun compte n'existe encore. Allez sur `/` une fois l'app lancée, entrez votre e-mail, cliquez sur le lien reçu. Votre compte apparaît alors dans Authentication → Users — copiez son UUID dans `SEED_USER_ID`.
+
+## Import des données initiales
+
+```bash
+npm run seed
+```
+
+Lit `seed/recap_maquettes_els_tech.xlsx` (feuilles "Maquettes" et "Prospects", fusionnées), crée les 16 prospects, téléverse les 16 maquettes de `seed/maquettes/` dans le bucket privé `mockups`, et les rattache. **Idempotent** : relancer la commande met à jour les mêmes lignes au lieu d'en créer de nouvelles.
+
+## Développement
+
+```bash
+npm run dev      # serveur de dev
+npm run test     # tests Vitest
+npm run lint     # vérification des types (tsc --noEmit)
+npm run build    # build de production
+```
+
+## Déploiement (Vercel)
+
+1. Connectez le dépôt sur [vercel.com](https://vercel.com).
+2. Dans les paramètres du projet Vercel, ajoutez les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (uniquement celles-ci — jamais `SUPABASE_SERVICE_ROLE_KEY` côté Vercel/client).
+3. Build command : `npm run build` · Output directory : `dist` (détecté automatiquement par Vercel pour un projet Vite).
+4. Dans Supabase → Authentication → URL Configuration, ajoutez l'URL Vercel aux "Redirect URLs" pour que le lien magique fonctionne en production.
+
+Le script `npm run seed` ne tourne jamais sur Vercel : il s'exécute une fois, en local, avec la clé `service_role`.

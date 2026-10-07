@@ -2,105 +2,11 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Monopoly Cartoon</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="/src/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Suivi prospects — ELS Tech</title>
   </head>
   <body>
-    <div id="app">
-      <div id="top-bar">
-        <div id="players-panel"></div>
-        <div id="top-actions">
-          <div id="room-badge" class="hidden"></div>
-          <button id="sound-toggle" title="Couper / activer le son">🔊</button>
-          <button id="restart-btn" title="Recommencer une partie">🔄 Nouvelle partie</button>
-        </div>
-      </div>
-
-      <div id="turn-tracker" class="hidden"></div>
-
-      <div id="board-row">
-        <div id="board2d"></div>
-        <div id="tile-card" class="hidden"></div>
-      </div>
-
-      <div id="turn-panel">
-        <div id="turn-info">Au tour de <span id="current-player-name">Joueur 1</span></div>
-        <div id="dice-display">
-          <div class="die" id="die1">-</div>
-          <div class="die" id="die2">-</div>
-        </div>
-        <div id="action-log"></div>
-        <div id="waiting-banner" class="hidden">En attente du tour de <span id="waiting-for-name"></span>&hellip;</div>
-        <div id="buttons">
-          <button id="roll-btn">Lancer les des</button>
-          <button id="buy-btn" class="hidden">Acheter</button>
-          <button id="end-turn-btn" class="hidden">Finir le tour</button>
-        </div>
-        <div id="build-panel" class="hidden"></div>
-      </div>
-
-      <div id="victory-modal" class="hidden">
-        <div class="modal-box">
-          <h1 id="victory-title">🏆 Victoire !</h1>
-          <p id="victory-text"></p>
-          <button id="victory-restart-btn">Nouvelle partie</button>
-        </div>
-      </div>
-
-      <div id="setup-modal">
-        <div class="modal-box">
-          <div id="setup-step-mode" class="setup-step">
-            <h1>Monopoly Cartoon</h1>
-            <p>Comment veux-tu jouer ?</p>
-            <div class="setup-buttons-col">
-              <button id="mode-local-btn">🎲 Partie locale (un seul appareil)</button>
-              <button id="mode-create-btn">🌐 Creer une partie en ligne</button>
-              <button id="mode-join-btn">🔗 Rejoindre une partie</button>
-            </div>
-          </div>
-
-          <div id="setup-step-local" class="setup-step hidden">
-            <h1>Partie locale</h1>
-            <p>Choisissez le nombre de joueurs</p>
-            <div id="player-count-buttons">
-              <button data-count="2">2 Joueurs</button>
-              <button data-count="3">3 Joueurs</button>
-              <button data-count="4">4 Joueurs</button>
-            </div>
-            <button class="setup-back-btn" data-back="mode">&larr; Retour</button>
-          </div>
-
-          <div id="setup-step-create" class="setup-step hidden">
-            <h1>Creer une partie</h1>
-            <p>Ton nom de joueur</p>
-            <input id="create-name-input" type="text" placeholder="Ton nom" maxlength="16" />
-            <button id="create-confirm-btn">Creer la partie</button>
-            <button class="setup-back-btn" data-back="mode">&larr; Retour</button>
-          </div>
-
-          <div id="setup-step-join" class="setup-step hidden">
-            <h1>Rejoindre une partie</h1>
-            <p>Code de la partie et ton nom</p>
-            <input id="join-code-input" type="text" placeholder="CODE" maxlength="4" style="text-transform:uppercase" />
-            <input id="join-name-input" type="text" placeholder="Ton nom" maxlength="16" />
-            <button id="join-confirm-btn">Rejoindre</button>
-            <button class="setup-back-btn" data-back="mode">&larr; Retour</button>
-          </div>
-
-          <div id="setup-step-lobby" class="setup-step hidden">
-            <h1>Salon d'attente</h1>
-            <p id="lobby-code-display"></p>
-            <div id="lobby-roster"></div>
-            <button id="lobby-start-btn" class="hidden">Demarrer la partie</button>
-            <p id="lobby-wait-text" class="hidden">En attente que l'hote demarre la partie&hellip;</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
