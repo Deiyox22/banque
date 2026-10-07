@@ -7,6 +7,8 @@ import { Pipeline } from './pages/Pipeline';
 import { FicheProspect } from './pages/FicheProspect';
 import { Maquettes } from './pages/Maquettes';
 import { Messages } from './pages/Messages';
+import { Statistiques } from './pages/Statistiques';
+import { Parametres } from './pages/Parametres';
 
 export function App() {
   const { session, loading } = useSession();
@@ -32,6 +34,8 @@ export function App() {
           <Route path="/prospects/:id" element={<FicheProspect />} />
           <Route path="/maquettes" element={<Maquettes />} />
           <Route path="/messages" element={<Messages />} />
+          <Route path="/statistiques" element={<Statistiques />} />
+          <Route path="/parametres" element={<Parametres />} />
         </Routes>
       </AppShell>
     </BrowserRouter>

@@ -36,7 +36,7 @@ supabase db push
 
 **Sans la CLI** : collez le contenu de `supabase/schema.sql` dans l'éditeur SQL du dashboard Supabase et exécutez-le.
 
-Avant la première connexion : aucun compte n'existe encore. Allez sur `/` une fois l'app lancée, entrez votre e-mail, cliquez sur le lien reçu. Votre compte apparaît alors dans Authentication → Users — copiez son UUID dans `SEED_USER_ID`.
+Avant la première connexion : aucun compte n'existe encore. Dans le dashboard Supabase → Authentication → Users → **Add user**, créez votre compte (e-mail + mot de passe), en cochant **Auto Confirm User**. Copiez son UUID dans `SEED_USER_ID`. Vous pourrez ensuite vous connecter dans l'app avec cet e-mail et ce mot de passe (l'application utilise une connexion par mot de passe, pas de lien magique).
 
 ## Import des données initiales
 
@@ -60,6 +60,5 @@ npm run build    # build de production
 1. Connectez le dépôt sur [vercel.com](https://vercel.com).
 2. Dans les paramètres du projet Vercel, ajoutez les variables `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` (uniquement celles-ci — jamais `SUPABASE_SERVICE_ROLE_KEY` côté Vercel/client).
 3. Build command : `npm run build` · Output directory : `dist` (détecté automatiquement par Vercel pour un projet Vite).
-4. Dans Supabase → Authentication → URL Configuration, ajoutez l'URL Vercel aux "Redirect URLs" pour que le lien magique fonctionne en production.
 
 Le script `npm run seed` ne tourne jamais sur Vercel : il s'exécute une fois, en local, avec la clé `service_role`.

@@ -1,14 +1,15 @@
 import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { ThemeToggle } from './ThemeToggle';
 
-// Les écrans des prochaines étapes (Statistiques, Paramètres) s'ajoutent ici
-// au fur et à mesure qu'ils existent.
 const NAV_ITEMS = [
   { to: '/', label: "Aujourd'hui" },
   { to: '/pipeline', label: 'Pipeline' },
   { to: '/maquettes', label: 'Maquettes' },
   { to: '/messages', label: 'Messages' },
+  { to: '/statistiques', label: 'Statistiques' },
+  { to: '/parametres', label: 'Paramètres' },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -37,14 +38,31 @@ export function AppShell({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => supabase.auth.signOut()}
-          className="mt-auto rounded-lg px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-100 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:text-slate-400 dark:hover:bg-slate-800"
-        >
-          Se déconnecter
-        </button>
+        <div className="mt-auto flex flex-col gap-1">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => supabase.auth.signOut()}
+            className="rounded-lg px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-100 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:text-slate-400 dark:hover:bg-slate-800"
+          >
+            Se déconnecter
+          </button>
+        </div>
       </nav>
+
+      <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3 md:hidden dark:border-slate-800">
+        <p className="text-sm font-semibold">ELS Tech</p>
+        <div className="flex items-center gap-1">
+          <ThemeToggle className="px-2 py-1" />
+          <button
+            type="button"
+            onClick={() => supabase.auth.signOut()}
+            className="rounded-lg px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:text-slate-400 dark:hover:bg-slate-800"
+          >
+            Déconnexion
+          </button>
+        </div>
+      </header>
 
       <main className="flex-1 px-4 py-6 md:px-8">{children}</main>
 
@@ -58,7 +76,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             to={item.to}
             end
             className={({ isActive }) =>
-              `flex-1 py-3 text-center text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
+              `flex-1 px-0.5 py-3 text-center text-[11px] font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
                 isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'
               }`
             }
