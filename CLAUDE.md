@@ -5,7 +5,7 @@ Dashboard de suivi de prospects pour ELS Tech (Anthony, Loudéac). Voir `PRD.md`
 ## Stack
 
 - React 18, Vite, TypeScript (strict), Tailwind CSS.
-- Supabase : Postgres + Auth (lien magique) + Storage (bucket privé `mockups`).
+- Supabase : Postgres + Auth (e-mail + mot de passe) + Storage (bucket privé `mockups`).
 - Déploiement Vercel.
 - TanStack Table pour la vue tableau du pipeline, dnd-kit pour le Kanban. Pas d'autre dépendance lourde (pas de Redux, pas de UI kit complet) : des composants simples, un rôle par composant.
 - Tests : Vitest.
