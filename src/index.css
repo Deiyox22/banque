@@ -1,7 +1,15 @@
 @import "tailwindcss";
 
+/* Mode sombre piloté par une classe .dark sur <html> (src/lib/useDarkMode.ts),
+   pas par la préférence système : "mode clair par défaut, sombre en option". */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
 }
 
 body {
