@@ -9,6 +9,7 @@ import { MockupPreview } from '../components/MockupPreview';
 import { ActiviteForm } from '../components/ActiviteForm';
 import { JournalActivites } from '../components/JournalActivites';
 import { PreparerMessage } from '../components/PreparerMessage';
+import { ContactCard } from '../components/ContactCard';
 import { formatDate, toDateInputValue } from '../lib/formatDate';
 import type { StatutProspect } from '../types/database';
 
@@ -97,42 +98,9 @@ export function FicheProspect() {
         </select>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {prospect.telephone && (
-          <a
-            href={`tel:${prospect.telephone.replace(/\s+/g, '')}`}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
-          >
-            📞 Appeler
-          </a>
-        )}
-        {prospect.telephone && (
-          <a
-            href={`sms:${prospect.telephone.replace(/\s+/g, '')}`}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
-          >
-            💬 SMS
-          </a>
-        )}
-        {prospect.email && (
-          <a
-            href={`mailto:${prospect.email}`}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
-          >
-            ✉️ Mail
-          </a>
-        )}
-      </div>
+      <ContactCard prospect={prospect} />
 
-      <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <dt className="text-slate-500 dark:text-slate-400">Téléphone</dt>
-          <dd>{prospect.telephone ?? '—'}</dd>
-        </div>
-        <div>
-          <dt className="text-slate-500 dark:text-slate-400">E-mail</dt>
-          <dd className="break-all">{prospect.email ?? '—'}</dd>
-        </div>
+      <dl className="mt-4 grid grid-cols-2 gap-4 text-sm">
         <div>
           <dt className="text-slate-500 dark:text-slate-400">Site actuel</dt>
           <dd>{prospect.site_actuel ?? '—'}</dd>

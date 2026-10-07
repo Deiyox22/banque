@@ -68,7 +68,7 @@ function KanbanColumn({
         setNodeRef(el);
         innerRef(el);
       }}
-      className={`flex w-[82vw] shrink-0 snap-center flex-col rounded-xl border p-3 sm:w-64 sm:snap-align-none ${
+      className={`flex w-full flex-col rounded-xl border p-3 sm:w-64 sm:shrink-0 sm:snap-center ${
         isOver
           ? 'border-sky-400 bg-sky-50 dark:border-sky-500 dark:bg-sky-950'
           : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
@@ -77,11 +77,13 @@ function KanbanColumn({
       <p className="mb-3 text-sm font-semibold">
         {statut} <span className="text-slate-400">({prospects.length})</span>
       </p>
-      <div className="flex flex-col gap-2">
-        {prospects.map((prospect) => (
-          <KanbanCard key={prospect.id} prospect={prospect} />
-        ))}
-      </div>
+      {prospects.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {prospects.map((prospect) => (
+            <KanbanCard key={prospect.id} prospect={prospect} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -97,7 +99,7 @@ export function PipelineKanban({
   const columnRefs = useRef<Partial<Record<StatutProspect, HTMLDivElement | null>>>({});
 
   function allerAuStatut(statut: StatutProspect) {
-    columnRefs.current[statut]?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    columnRefs.current[statut]?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -112,9 +114,10 @@ export function PipelineKanban({
 
   return (
     <div>
-      {/* Mobile uniquement : les colonnes défilent une à une (snap-scroll),
-          ces pastilles permettent de sauter directement à un statut plutôt
-          que de glisser à travers d'éventuelles colonnes vides. */}
+      {/* Mobile uniquement : les statuts s'empilent verticalement (plus
+          naturel à faire défiler qu'horizontalement) ; ces pastilles
+          permettent de sauter directement à un statut plutôt que de
+          descendre à travers d'éventuelles sections vides. */}
       <div className="mb-3 flex gap-2 overflow-x-auto pb-1 sm:hidden" aria-label="Aller à un statut">
         {STATUTS.map((statut) => (
           <button
@@ -130,7 +133,7 @@ export function PipelineKanban({
       </div>
 
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-4 sm:snap-none">
+        <div className="flex flex-col gap-3 sm:flex-row sm:snap-x sm:snap-mandatory sm:overflow-x-auto sm:pb-4">
           {STATUTS.map((statut) => (
             <KanbanColumn
               key={statut}

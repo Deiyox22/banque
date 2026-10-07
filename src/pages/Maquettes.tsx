@@ -1,10 +1,7 @@
 import type { ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
 import { useMockups } from '../lib/useMockups';
 import { useUploadMockupVersion } from '../lib/useUploadMockupVersion';
-import { MockupThumbnail } from '../components/MockupThumbnail';
-import { StatutBadge } from '../components/StatutBadge';
-import { formatDate } from '../lib/formatDate';
+import { MaquetteCard } from '../components/MaquetteCard';
 
 export function Maquettes() {
   const { mockups, loading, error, refetch } = useMockups();
@@ -37,45 +34,12 @@ export function Maquettes() {
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {mockups.map((mockup) => (
-            <div key={mockup.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <Link to={`/prospects/${mockup.prospect.id}`}>
-                <MockupThumbnail storagePath={mockup.storage_path} />
-              </Link>
-
-              <div className="mt-3">
-                <Link
-                  to={`/prospects/${mockup.prospect.id}`}
-                  className="font-medium text-sky-600 hover:underline dark:text-sky-400"
-                >
-                  {mockup.prospect.nom}
-                </Link>
-                <div className="mt-1">
-                  <StatutBadge statut={mockup.prospect.statut} />
-                </div>
-                {mockup.parcours_demo && (
-                  <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                    Parcours démo : {mockup.parcours_demo}
-                  </p>
-                )}
-                <p className="mt-1 text-xs text-slate-400">
-                  Version {mockup.version} · {formatDate(mockup.created_at)}
-                </p>
-              </div>
-
-              <label className="mt-3 block text-xs">
-                <span className="text-slate-500 dark:text-slate-400">Téléverser une nouvelle version</span>
-                <input
-                  type="file"
-                  accept=".html,text/html"
-                  disabled={uploadingProspectId === mockup.prospect.id}
-                  onChange={(event) => handleFileChange(mockup.prospect.id, mockup.version, event)}
-                  className="mt-1 block w-full text-xs text-slate-500 dark:text-slate-400"
-                />
-              </label>
-              {uploadingProspectId === mockup.prospect.id && (
-                <p className="mt-1 text-xs text-sky-600 dark:text-sky-400">Envoi en cours…</p>
-              )}
-            </div>
+            <MaquetteCard
+              key={mockup.id}
+              mockup={mockup}
+              uploading={uploadingProspectId === mockup.prospect.id}
+              onFileChange={(event) => handleFileChange(mockup.prospect.id, mockup.version, event)}
+            />
           ))}
         </div>
       )}

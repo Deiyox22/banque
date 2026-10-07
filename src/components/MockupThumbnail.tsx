@@ -1,8 +1,4 @@
-import { useMockupHtml } from '../lib/useMockupHtml';
-
-export function MockupThumbnail({ storagePath }: { storagePath: string }) {
-  const { html, error } = useMockupHtml(storagePath);
-
+export function MockupThumbnail({ html, error }: { html: string | null; error: string | null }) {
   return (
     <div className="h-40 w-full overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-800">
       {error ? (
