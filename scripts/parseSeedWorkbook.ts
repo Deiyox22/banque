@@ -1,4 +1,5 @@
 import * as XLSX from 'xlsx';
+import { readFileSync } from 'node:fs';
 import type { Priorite } from '../src/types/database';
 
 // Le classeur de seed a 3 feuilles : "Maquettes" (une ligne par maquette déjà
@@ -68,7 +69,11 @@ function normalisePriorite(value: string | number | undefined | null): Priorite 
 }
 
 export function readWorkbook(filePath: string): XLSX.WorkBook {
-  return XLSX.readFile(filePath);
+  // XLSX.readFile n'est exposé que sur l'export par défaut en ESM (bizarrerie
+  // d'interop CJS/ESM du paquet xlsx) ; on lit le buffer nous-mêmes et on
+  // utilise XLSX.read, qui est un export nommé stable.
+  const buffer = readFileSync(filePath);
+  return XLSX.read(buffer, { type: 'buffer' });
 }
 
 export function parseMaquettesSheet(workbook: XLSX.WorkBook): MaquetteRow[] {
