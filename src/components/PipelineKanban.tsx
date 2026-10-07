@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   DndContext,
   PointerSensor,
@@ -50,13 +51,24 @@ function KanbanCard({ prospect }: { prospect: Prospect }) {
   );
 }
 
-function KanbanColumn({ statut, prospects }: { statut: StatutProspect; prospects: Prospect[] }) {
+function KanbanColumn({
+  statut,
+  prospects,
+  innerRef,
+}: {
+  statut: StatutProspect;
+  prospects: Prospect[];
+  innerRef: (el: HTMLDivElement | null) => void;
+}) {
   const { setNodeRef, isOver } = useDroppable({ id: statut });
 
   return (
     <div
-      ref={setNodeRef}
-      className={`flex w-64 shrink-0 flex-col rounded-xl border p-3 ${
+      ref={(el) => {
+        setNodeRef(el);
+        innerRef(el);
+      }}
+      className={`flex w-[82vw] shrink-0 snap-center flex-col rounded-xl border p-3 sm:w-64 sm:snap-align-none ${
         isOver
           ? 'border-sky-400 bg-sky-50 dark:border-sky-500 dark:bg-sky-950'
           : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
@@ -82,6 +94,11 @@ export function PipelineKanban({
   onStatutChange: (id: string, statut: StatutProspect) => void;
 }) {
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+  const columnRefs = useRef<Partial<Record<StatutProspect, HTMLDivElement | null>>>({});
+
+  function allerAuStatut(statut: StatutProspect) {
+    columnRefs.current[statut]?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+  }
 
   function handleDragEnd(event: DragEndEvent) {
     const prospectId = String(event.active.id);
@@ -94,16 +111,38 @@ export function PipelineKanban({
   }
 
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      <div className="flex gap-3 overflow-x-auto pb-4">
+    <div>
+      {/* Mobile uniquement : les colonnes défilent une à une (snap-scroll),
+          ces pastilles permettent de sauter directement à un statut plutôt
+          que de glisser à travers d'éventuelles colonnes vides. */}
+      <div className="mb-3 flex gap-2 overflow-x-auto pb-1 sm:hidden" aria-label="Aller à un statut">
         {STATUTS.map((statut) => (
-          <KanbanColumn
+          <button
             key={statut}
-            statut={statut}
-            prospects={prospects.filter((p) => p.statut === statut)}
-          />
+            type="button"
+            onClick={() => allerAuStatut(statut)}
+            className="shrink-0 rounded-full border border-slate-300 px-3 py-1 text-xs font-medium whitespace-nowrap text-slate-600 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700 dark:text-slate-300"
+          >
+            {statut}{' '}
+            <span className="text-slate-400">({prospects.filter((p) => p.statut === statut).length})</span>
+          </button>
         ))}
       </div>
-    </DndContext>
+
+      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-4 sm:snap-none">
+          {STATUTS.map((statut) => (
+            <KanbanColumn
+              key={statut}
+              statut={statut}
+              prospects={prospects.filter((p) => p.statut === statut)}
+              innerRef={(el) => {
+                columnRefs.current[statut] = el;
+              }}
+            />
+          ))}
+        </div>
+      </DndContext>
+    </div>
   );
 }
