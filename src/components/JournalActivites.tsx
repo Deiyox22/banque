@@ -10,7 +10,7 @@ export function JournalActivites({ activities }: { activities: Activity[] }) {
   return (
     <ul className="space-y-2">
       {activities.map((activite) => (
-        <li key={activite.id} className="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-800">
+        <li key={activite.id} className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="flex items-center justify-between">
             <span className="font-medium">{TYPE_ACTIVITE_LABELS[activite.type]}</span>
             <span className="text-xs text-slate-500 dark:text-slate-400">{formatDate(activite.date)}</span>

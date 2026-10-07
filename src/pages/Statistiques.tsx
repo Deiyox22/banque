@@ -15,7 +15,7 @@ function Barre({ label, valeur, total }: { label: string; valeur: number; total:
         </span>
       </div>
       <div className="mt-1 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
-        <div className="h-full rounded-full bg-blue-600" style={{ width: `${pourcentage}%` }} />
+        <div className="h-full rounded-full bg-sky-600" style={{ width: `${pourcentage}%` }} />
       </div>
     </div>
   );
@@ -23,7 +23,7 @@ function Barre({ label, valeur, total }: { label: string; valeur: number; total:
 
 function Carte({ titre, valeur }: { titre: string; valeur: string }) {
   return (
-    <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+    <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <p className="text-xs text-slate-500 dark:text-slate-400">{titre}</p>
       <p className="mt-1 text-xl font-semibold">{valeur}</p>
     </div>
@@ -57,7 +57,7 @@ export function Statistiques() {
 
       <section className="mt-6">
         <h2 className="mb-2 text-sm font-semibold">Entonnoir</h2>
-        <div className="space-y-3 rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+        <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <Barre label="Contactés" valeur={entonnoir.contactes} total={totalEntonnoir} />
           <Barre label="Vus" valeur={entonnoir.vus} total={totalEntonnoir} />
           <Barre label="Réponses" valeur={entonnoir.reponses} total={totalEntonnoir} />
@@ -76,7 +76,7 @@ export function Statistiques() {
 
       <section className="mt-6">
         <h2 className="mb-2 text-sm font-semibold">Répartition par statut</h2>
-        <div className="space-y-3 rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+        <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           {STATUTS.map((statut) => {
             const entree = repartitionStatut.find((r) => r.statut === statut);
             return <Barre key={statut} label={statut} valeur={entree?.nombre ?? 0} total={totalProspects} />;
@@ -89,7 +89,7 @@ export function Statistiques() {
         {repartitionTypeActivite.length === 0 ? (
           <p className="text-sm text-slate-500 dark:text-slate-400">Aucune activité enregistrée pour le moment.</p>
         ) : (
-          <div className="space-y-3 rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+          <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             {repartitionTypeActivite.map((entree) => (
               <Barre
                 key={entree.type}
@@ -116,7 +116,7 @@ export function Statistiques() {
               <Link
                 key={prospect.id}
                 to={`/prospects/${prospect.id}`}
-                className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:border-slate-800 dark:hover:bg-slate-900"
+                className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
               >
                 <span className="font-medium">{prospect.nom}</span>
                 <span className="text-xs text-slate-500 dark:text-slate-400">

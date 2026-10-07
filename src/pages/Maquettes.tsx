@@ -37,7 +37,7 @@ export function Maquettes() {
       ) : (
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {mockups.map((mockup) => (
-            <div key={mockup.id} className="rounded-xl border border-slate-200 p-3 dark:border-slate-800">
+            <div key={mockup.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <Link to={`/prospects/${mockup.prospect.id}`}>
                 <MockupThumbnail storagePath={mockup.storage_path} />
               </Link>
@@ -45,7 +45,7 @@ export function Maquettes() {
               <div className="mt-3">
                 <Link
                   to={`/prospects/${mockup.prospect.id}`}
-                  className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+                  className="font-medium text-sky-600 hover:underline dark:text-sky-400"
                 >
                   {mockup.prospect.nom}
                 </Link>
@@ -73,7 +73,7 @@ export function Maquettes() {
                 />
               </label>
               {uploadingProspectId === mockup.prospect.id && (
-                <p className="mt-1 text-xs text-blue-600 dark:text-blue-400">Envoi en cours…</p>
+                <p className="mt-1 text-xs text-sky-600 dark:text-sky-400">Envoi en cours…</p>
               )}
             </div>
           ))}

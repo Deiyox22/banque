@@ -54,7 +54,7 @@ export function Parametres() {
     <div>
       <h1 className="text-lg font-semibold">Paramètres</h1>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <label className="block text-sm font-medium">
           Délai de relance (jours)
           <input
@@ -93,7 +93,7 @@ export function Parametres() {
         <button
           type="submit"
           disabled={statutEnregistrement === 'enregistrement'}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 disabled:opacity-60"
+          className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 disabled:opacity-60"
         >
           {statutEnregistrement === 'enregistrement'
             ? 'Enregistrement…'
@@ -111,12 +111,12 @@ export function Parametres() {
 
       <section className="mt-6">
         <h2 className="mb-2 text-sm font-semibold">Données</h2>
-        <div className="space-y-3 rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+        <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <button
             type="button"
             onClick={exporter}
             disabled={exporting}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 disabled:opacity-60 dark:border-slate-700"
+            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 disabled:opacity-60 dark:border-slate-700"
           >
             {exporting ? 'Export…' : 'Exporter les prospects (CSV)'}
           </button>

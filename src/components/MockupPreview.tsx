@@ -13,8 +13,8 @@ export function MockupPreview({ storagePath }: { storagePath: string }) {
         <button
           type="button"
           onClick={() => setTaille('mobile')}
-          className={`rounded-md px-2.5 py-1 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
-            taille === 'mobile' ? 'bg-blue-600 text-white' : 'text-slate-600 dark:text-slate-300'
+          className={`rounded-md px-2.5 py-1 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 ${
+            taille === 'mobile' ? 'bg-sky-600 text-white' : 'text-slate-600 dark:text-slate-300'
           }`}
         >
           Mobile
@@ -22,8 +22,8 @@ export function MockupPreview({ storagePath }: { storagePath: string }) {
         <button
           type="button"
           onClick={() => setTaille('ordinateur')}
-          className={`rounded-md px-2.5 py-1 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
-            taille === 'ordinateur' ? 'bg-blue-600 text-white' : 'text-slate-600 dark:text-slate-300'
+          className={`rounded-md px-2.5 py-1 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 ${
+            taille === 'ordinateur' ? 'bg-sky-600 text-white' : 'text-slate-600 dark:text-slate-300'
           }`}
         >
           Ordinateur

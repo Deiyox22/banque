@@ -42,7 +42,7 @@ function KanbanCard({ prospect }: { prospect: Prospect }) {
       </div>
       <Link
         to={`/prospects/${prospect.id}`}
-        className="mt-2 inline-block text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+        className="mt-2 inline-block text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"
       >
         Voir la fiche
       </Link>
@@ -58,7 +58,7 @@ function KanbanColumn({ statut, prospects }: { statut: StatutProspect; prospects
       ref={setNodeRef}
       className={`flex w-64 shrink-0 flex-col rounded-xl border p-3 ${
         isOver
-          ? 'border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-950'
+          ? 'border-sky-400 bg-sky-50 dark:border-sky-500 dark:bg-sky-950'
           : 'border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900'
       }`}
     >

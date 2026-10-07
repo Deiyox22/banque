@@ -37,7 +37,7 @@ export function ActiviteForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+    <form onSubmit={handleSubmit} className="space-y-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="grid grid-cols-2 gap-3">
         <label className="block text-sm font-medium">
           Type
@@ -103,7 +103,7 @@ export function ActiviteForm({
       <button
         type="submit"
         disabled={envoi}
-        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 disabled:opacity-60"
+        className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 disabled:opacity-60"
       >
         {envoi ? 'Ajout…' : "Ajouter l'activité"}
       </button>

@@ -66,7 +66,7 @@ const columns = columnHelper.columns([
     cell: (info) => (
       <Link
         to={`/prospects/${info.row.original.id}`}
-        className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
+        className="text-sm font-medium text-sky-600 hover:underline dark:text-sky-400"
       >
         Voir
       </Link>
@@ -105,7 +105,7 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
           value={globalFilter}
           onChange={(event) => setGlobalFilter(event.target.value)}
           placeholder="Rechercher une entreprise…"
-          className="min-w-[180px] flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:border-slate-700 dark:bg-slate-800"
+          className="min-w-[180px] flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700 dark:bg-slate-800"
         />
         <select
           value={(statutColumn?.getFilterValue() as string) ?? ''}
@@ -146,7 +146,7 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
         </select>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 dark:bg-slate-900">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -157,7 +157,7 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
                       <button
                         type="button"
                         onClick={() => header.column.toggleSorting()}
-                        className="flex items-center gap-1 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
+                        className="flex items-center gap-1 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500"
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {header.column.getIsSorted() === 'asc' && '↑'}

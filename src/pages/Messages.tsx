@@ -72,7 +72,7 @@ export function Messages() {
     <div>
       <h1 className="text-lg font-semibold">Messages</h1>
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-3 rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <h2 className="text-sm font-semibold">{editingId ? 'Modifier le modèle' : 'Nouveau modèle'}</h2>
 
         <div className="grid grid-cols-2 gap-3">
@@ -138,7 +138,7 @@ export function Messages() {
           <button
             type="submit"
             disabled={envoi}
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 disabled:opacity-60"
+            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 disabled:opacity-60"
           >
             {envoi ? 'Enregistrement…' : editingId ? 'Enregistrer' : 'Créer le modèle'}
           </button>
@@ -146,7 +146,7 @@ export function Messages() {
             <button
               type="button"
               onClick={resetForm}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:border-slate-700"
+              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700"
             >
               Annuler
             </button>
@@ -169,7 +169,7 @@ export function Messages() {
       ) : (
         <ul className="mt-6 space-y-2">
           {templates.map((template) => (
-            <li key={template.id} className="rounded-lg border border-slate-200 p-3 text-sm dark:border-slate-800">
+            <li key={template.id} className="rounded-lg border border-slate-200 bg-white p-3 text-sm dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="font-medium">{template.nom}</p>
@@ -179,7 +179,7 @@ export function Messages() {
                   <button
                     type="button"
                     onClick={() => startEdit(template)}
-                    className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400"
+                    className="text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"
                   >
                     Modifier
                   </button>

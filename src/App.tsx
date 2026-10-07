@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useSession } from './lib/useSession';
+import { ThemeProvider } from './lib/ThemeContext';
 import { Login } from './pages/Login';
 import { AppShell } from './components/AppShell';
 import { Aujourdhui } from './pages/Aujourdhui';
@@ -10,7 +11,7 @@ import { Messages } from './pages/Messages';
 import { Statistiques } from './pages/Statistiques';
 import { Parametres } from './pages/Parametres';
 
-export function App() {
+function AppRoutes() {
   const { session, loading } = useSession();
 
   if (loading) {
@@ -39,5 +40,13 @@ export function App() {
         </Routes>
       </AppShell>
     </BrowserRouter>
+  );
+}
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <AppRoutes />
+    </ThemeProvider>
   );
 }
