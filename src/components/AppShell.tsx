@@ -2,10 +2,12 @@ import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
-// Un seul onglet pour l'instant (Pipeline) ; les écrans des prochaines
-// étapes (Aujourd'hui, Maquettes, Messages, Statistiques, Paramètres)
-// s'ajoutent ici au fur et à mesure qu'ils existent.
-const NAV_ITEMS = [{ to: '/', label: 'Pipeline' }];
+// Les écrans des prochaines étapes (Aujourd'hui, Messages, Statistiques,
+// Paramètres) s'ajoutent ici au fur et à mesure qu'ils existent.
+const NAV_ITEMS = [
+  { to: '/', label: 'Pipeline' },
+  { to: '/maquettes', label: 'Maquettes' },
+];
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -20,6 +22,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <NavLink
               key={item.to}
               to={item.to}
+              end
               className={({ isActive }) =>
                 `rounded-lg px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
                   isActive
@@ -51,6 +54,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <NavLink
             key={item.to}
             to={item.to}
+            end
             className={({ isActive }) =>
               `flex-1 py-3 text-center text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
                 isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'

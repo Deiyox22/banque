@@ -4,6 +4,7 @@ import { Login } from './pages/Login';
 import { AppShell } from './components/AppShell';
 import { Pipeline } from './pages/Pipeline';
 import { FicheProspect } from './pages/FicheProspect';
+import { Maquettes } from './pages/Maquettes';
 
 export function App() {
   const { session, loading } = useSession();
@@ -26,6 +27,7 @@ export function App() {
         <Routes>
           <Route path="/" element={<Pipeline />} />
           <Route path="/prospects/:id" element={<FicheProspect />} />
+          <Route path="/maquettes" element={<Maquettes />} />
         </Routes>
       </AppShell>
     </BrowserRouter>

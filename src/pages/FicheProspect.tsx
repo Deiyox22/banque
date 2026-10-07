@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useProspect } from '../lib/useProspect';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { StatutBadge, STATUTS } from '../components/StatutBadge';
+import { MockupPreview } from '../components/MockupPreview';
 import { formatDate, toDateInputValue } from '../lib/formatDate';
 import type { StatutProspect } from '../types/database';
 
@@ -163,34 +164,38 @@ export function FicheProspect() {
       </label>
 
       <div className="mt-6">
-        <h2 className="text-sm font-semibold">Maquettes</h2>
+        <h2 className="text-sm font-semibold">Maquette</h2>
         {mockups.length === 0 ? (
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Aucune maquette pour ce prospect.</p>
         ) : (
-          <ul className="mt-2 space-y-2">
-            {mockups.map((mockup) => (
-              <li
-                key={mockup.id}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-800"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{mockup.nom_fichier}</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">v{mockup.version}</span>
-                </div>
-                {mockup.parcours_demo && (
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                    Parcours démo : {mockup.parcours_demo}
-                  </p>
-                )}
-                {mockup.a_valider && (
-                  <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">À valider : {mockup.a_valider}</p>
-                )}
-                <p className="mt-1 text-xs text-slate-400">Ajoutée le {formatDate(mockup.created_at)}</p>
-              </li>
-            ))}
-          </ul>
+          <>
+            <div className="mt-2">
+              <MockupPreview storagePath={mockups[0].storage_path} />
+            </div>
+            <ul className="mt-4 space-y-2">
+              {mockups.map((mockup) => (
+                <li
+                  key={mockup.id}
+                  className="rounded-lg border border-slate-200 px-3 py-2 text-sm dark:border-slate-800"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{mockup.nom_fichier}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">v{mockup.version}</span>
+                  </div>
+                  {mockup.parcours_demo && (
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                      Parcours démo : {mockup.parcours_demo}
+                    </p>
+                  )}
+                  {mockup.a_valider && (
+                    <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">À valider : {mockup.a_valider}</p>
+                  )}
+                  <p className="mt-1 text-xs text-slate-400">Ajoutée le {formatDate(mockup.created_at)}</p>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
-        <p className="mt-2 text-xs text-slate-400">L'aperçu de la maquette arrive à l'étape suivante (J3).</p>
       </div>
     </div>
   );
