@@ -13,7 +13,7 @@ Un tableau de bord qui répond en 5 secondes à :
 
 ## Utilisateur
 
-Un seul utilisateur (Anthony). Connexion par e-mail + lien magique (Supabase Auth). Toutes les tables protégées par RLS sur `auth.uid()`.
+Un seul utilisateur (Anthony). Connexion par e-mail + mot de passe (Supabase Auth) — préféré au lien magique pour éviter la friction d'ouvrir un e-mail sur mobile à chaque connexion. Toutes les tables protégées par RLS sur `auth.uid()`.
 
 ## Stack
 
