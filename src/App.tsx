@@ -6,6 +6,7 @@ import { Aujourdhui } from './pages/Aujourdhui';
 import { Pipeline } from './pages/Pipeline';
 import { FicheProspect } from './pages/FicheProspect';
 import { Maquettes } from './pages/Maquettes';
+import { Messages } from './pages/Messages';
 
 export function App() {
   const { session, loading } = useSession();
@@ -30,6 +31,7 @@ export function App() {
           <Route path="/pipeline" element={<Pipeline />} />
           <Route path="/prospects/:id" element={<FicheProspect />} />
           <Route path="/maquettes" element={<Maquettes />} />
+          <Route path="/messages" element={<Messages />} />
         </Routes>
       </AppShell>
     </BrowserRouter>

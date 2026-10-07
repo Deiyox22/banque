@@ -8,6 +8,7 @@ import { StatutBadge, STATUTS } from '../components/StatutBadge';
 import { MockupPreview } from '../components/MockupPreview';
 import { ActiviteForm } from '../components/ActiviteForm';
 import { JournalActivites } from '../components/JournalActivites';
+import { PreparerMessage } from '../components/PreparerMessage';
 import { formatDate, toDateInputValue } from '../lib/formatDate';
 import type { StatutProspect } from '../types/database';
 
@@ -15,7 +16,7 @@ export function FicheProspect() {
   const { id } = useParams<{ id: string }>();
   const { prospect, mockups, loading, error, update, refetch } = useProspect(id);
   const { activities, ajouterActivite } = useActivities(id);
-  const { delaiRelanceJours } = useSettings();
+  const { delaiRelanceJours, signature } = useSettings();
   const [notes, setNotes] = useState('');
   const [notesDirty, setNotesDirty] = useState(false);
 
@@ -209,6 +210,18 @@ export function FicheProspect() {
             </ul>
           </>
         )}
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-sm font-semibold">Préparer un message</h2>
+        <div className="mt-2">
+          <PreparerMessage
+            prospect={prospect}
+            mockup={mockups[0] ?? null}
+            signature={signature}
+            onEnregistrerEnvoi={handleAjouterActivite}
+          />
+        </div>
       </div>
 
       <div className="mt-6">
