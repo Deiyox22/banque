@@ -97,20 +97,22 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
   const prioriteColumn = table.getColumn('priorite');
   const activiteColumn = table.getColumn('activite');
 
+  const rows = table.getRowModel().rows;
+
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <input
           type="search"
           value={globalFilter}
           onChange={(event) => setGlobalFilter(event.target.value)}
           placeholder="Rechercher une entreprise…"
-          className="min-w-[180px] flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-700 dark:bg-slate-800"
+          className="min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 sm:flex-1 dark:border-slate-700 dark:bg-slate-800"
         />
         <select
           value={(statutColumn?.getFilterValue() as string) ?? ''}
           onChange={(event) => statutColumn?.setFilterValue(event.target.value || undefined)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+          className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm sm:w-auto dark:border-slate-700 dark:bg-slate-800"
           aria-label="Filtrer par statut"
         >
           <option value="">Tous les statuts</option>
@@ -123,7 +125,7 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
         <select
           value={(prioriteColumn?.getFilterValue() as string) ?? ''}
           onChange={(event) => prioriteColumn?.setFilterValue(event.target.value || undefined)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+          className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm sm:w-auto dark:border-slate-700 dark:bg-slate-800"
           aria-label="Filtrer par priorité"
         >
           <option value="">Toutes les priorités</option>
@@ -134,7 +136,7 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
         <select
           value={(activiteColumn?.getFilterValue() as string) ?? ''}
           onChange={(event) => activiteColumn?.setFilterValue(event.target.value || undefined)}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+          className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm sm:w-auto sm:max-w-[16rem] dark:border-slate-700 dark:bg-slate-800"
           aria-label="Filtrer par activité"
         >
           <option value="">Toutes les activités</option>
@@ -146,7 +148,41 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
         </select>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      {/* Mobile : liste de cartes (un <table> ne tient pas sur 375px). */}
+      <div className="space-y-2 md:hidden">
+        {rows.map((row) => {
+          const prospect = row.original;
+          return (
+            <Link
+              key={row.id}
+              to={`/prospects/${prospect.id}`}
+              className="block rounded-lg border border-slate-200 bg-white p-3 text-sm shadow-sm focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-800 dark:bg-slate-900"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="font-medium">{prospect.nom}</p>
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{prospect.activite ?? '—'}</p>
+                </div>
+                <PriorityBadge priorite={prospect.priorite} />
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <StatutBadge statut={prospect.statut} />
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {formatDate(prospect.prochaine_relance)}
+                </span>
+              </div>
+            </Link>
+          );
+        })}
+        {rows.length === 0 && (
+          <p className="rounded-lg border border-dashed border-slate-300 px-4 py-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+            Aucun prospect ne correspond à ces filtres.
+          </p>
+        )}
+      </div>
+
+      {/* Desktop/tablette : tableau trié/filtré, mêmes données que la liste mobile. */}
+      <div className="hidden overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm md:block dark:border-slate-800 dark:bg-slate-900">
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 dark:bg-slate-900">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -172,7 +208,7 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
+            {rows.map((row) => (
               <tr key={row.id} className="border-t border-slate-100 dark:border-slate-800">
                 {row.getAllCells().map((cell) => (
                   <td key={cell.id} className="px-4 py-3">
@@ -183,7 +219,7 @@ export function PipelineTable({ prospects }: { prospects: Prospect[] }) {
             ))}
           </tbody>
         </table>
-        {table.getRowModel().rows.length === 0 && (
+        {rows.length === 0 && (
           <p className="px-4 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
             Aucun prospect ne correspond à ces filtres.
           </p>
