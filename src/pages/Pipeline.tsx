@@ -15,8 +15,8 @@ export function Pipeline() {
           <button
             type="button"
             onClick={() => setVue('kanban')}
-            className={`rounded-md px-3 py-1.5 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
-              vue === 'kanban' ? 'bg-blue-600 text-white' : 'text-slate-600 dark:text-slate-300'
+            className={`rounded-md px-3 py-1.5 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 ${
+              vue === 'kanban' ? 'bg-sky-600 text-white' : 'text-slate-600 dark:text-slate-300'
             }`}
           >
             Kanban
@@ -24,8 +24,8 @@ export function Pipeline() {
           <button
             type="button"
             onClick={() => setVue('tableau')}
-            className={`rounded-md px-3 py-1.5 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
-              vue === 'tableau' ? 'bg-blue-600 text-white' : 'text-slate-600 dark:text-slate-300'
+            className={`rounded-md px-3 py-1.5 font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 ${
+              vue === 'tableau' ? 'bg-sky-600 text-white' : 'text-slate-600 dark:text-slate-300'
             }`}
           >
             Tableau

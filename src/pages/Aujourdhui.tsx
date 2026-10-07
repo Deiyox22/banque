@@ -24,7 +24,7 @@ function ProspectRow({ prospect, info }: { prospect: Prospect; info?: string }) 
   return (
     <Link
       to={`/prospects/${prospect.id}`}
-      className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:border-slate-800 dark:hover:bg-slate-900"
+      className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
     >
       <span>
         <span className="font-medium">{prospect.nom}</span>
@@ -58,7 +58,7 @@ export function Aujourdhui() {
               <Link
                 key={reponse.id}
                 to={`/prospects/${reponse.prospect.id}`}
-                className="block rounded-lg border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:border-slate-800 dark:hover:bg-slate-900"
+                className="block rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm hover:bg-slate-50 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800"
               >
                 <span className="font-medium">{reponse.prospect.nom}</span>
                 {reponse.contenu && (

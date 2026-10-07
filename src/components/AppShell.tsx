@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { ThemeToggle } from './ThemeToggle';
+import { Logo } from './Logo';
 
 const NAV_ITEMS = [
   { to: '/', label: "Aujourd'hui" },
@@ -17,9 +18,11 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen pb-16 md:flex md:pb-0">
       <nav
         aria-label="Navigation principale"
-        className="hidden md:flex md:w-56 md:flex-col md:border-r md:border-slate-200 md:p-4 dark:md:border-slate-800"
+        className="hidden md:flex md:w-56 md:flex-col md:border-r md:border-slate-200 md:bg-white md:p-4 dark:md:border-slate-800 dark:md:bg-slate-900"
       >
-        <p className="px-2 text-sm font-semibold">ELS Tech</p>
+        <div className="px-2">
+          <Logo />
+        </div>
         <div className="mt-6 flex flex-col gap-1">
           {NAV_ITEMS.map((item) => (
             <NavLink
@@ -27,9 +30,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               to={item.to}
               end
               className={({ isActive }) =>
-                `rounded-lg px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
+                `rounded-lg px-3 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 ${
                   isActive
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-sky-600 text-white'
                     : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
                 }`
               }
@@ -43,21 +46,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => supabase.auth.signOut()}
-            className="rounded-lg px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-100 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:text-slate-400 dark:hover:bg-slate-800"
+            className="rounded-lg px-3 py-2 text-left text-sm text-slate-500 hover:bg-slate-100 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             Se déconnecter
           </button>
         </div>
       </nav>
 
-      <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3 md:hidden dark:border-slate-800">
-        <p className="text-sm font-semibold">ELS Tech</p>
+      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 md:hidden dark:border-slate-800 dark:bg-slate-900">
+        <Logo />
         <div className="flex items-center gap-1">
           <ThemeToggle className="px-2 py-1" />
           <button
             type="button"
             onClick={() => supabase.auth.signOut()}
-            className="rounded-lg px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 dark:text-slate-400 dark:hover:bg-slate-800"
+            className="rounded-lg px-2 py-1 text-sm text-slate-500 hover:bg-slate-100 focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             Déconnexion
           </button>
@@ -76,8 +79,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             to={item.to}
             end
             className={({ isActive }) =>
-              `flex-1 px-0.5 py-3 text-center text-[11px] font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 ${
-                isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'
+              `flex-1 px-0.5 py-3 text-center text-[11px] font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 ${
+                isActive ? 'text-sky-600 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'
               }`
             }
           >

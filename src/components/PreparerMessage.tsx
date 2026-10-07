@@ -91,7 +91,7 @@ export function PreparerMessage({
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+    <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <label className="block text-sm font-medium">
         Modèle
         <select
@@ -131,7 +131,7 @@ export function PreparerMessage({
             <button
               type="button"
               onClick={handleCopier}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
+              className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white focus:outline-2 focus:outline-offset-2 focus:outline-sky-500"
             >
               {copie ? 'Copié ✓' : 'Copier'}
             </button>
@@ -139,7 +139,7 @@ export function PreparerMessage({
               type="button"
               onClick={handleEnregistrerEnvoi}
               disabled={enregistre}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-blue-500 disabled:opacity-60 dark:border-slate-700"
+              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium focus:outline-2 focus:outline-offset-2 focus:outline-sky-500 disabled:opacity-60 dark:border-slate-700"
             >
               {enregistre ? 'Envoi enregistré ✓' : "Enregistrer l'envoi"}
             </button>
