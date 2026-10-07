@@ -2,10 +2,11 @@ import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
-// Les écrans des prochaines étapes (Aujourd'hui, Messages, Statistiques,
-// Paramètres) s'ajoutent ici au fur et à mesure qu'ils existent.
+// Les écrans des prochaines étapes (Messages, Statistiques, Paramètres)
+// s'ajoutent ici au fur et à mesure qu'ils existent.
 const NAV_ITEMS = [
-  { to: '/', label: 'Pipeline' },
+  { to: '/', label: "Aujourd'hui" },
+  { to: '/pipeline', label: 'Pipeline' },
   { to: '/maquettes', label: 'Maquettes' },
 ];
 

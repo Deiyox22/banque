@@ -1,17 +1,30 @@
 import { useState, type ChangeEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useProspect } from '../lib/useProspect';
+import { useActivities } from '../lib/useActivities';
+import { useSettings } from '../lib/useSettings';
 import { PriorityBadge } from '../components/PriorityBadge';
 import { StatutBadge, STATUTS } from '../components/StatutBadge';
 import { MockupPreview } from '../components/MockupPreview';
+import { ActiviteForm } from '../components/ActiviteForm';
+import { JournalActivites } from '../components/JournalActivites';
 import { formatDate, toDateInputValue } from '../lib/formatDate';
 import type { StatutProspect } from '../types/database';
 
 export function FicheProspect() {
   const { id } = useParams<{ id: string }>();
-  const { prospect, mockups, loading, error, update } = useProspect(id);
+  const { prospect, mockups, loading, error, update, refetch } = useProspect(id);
+  const { activities, ajouterActivite } = useActivities(id);
+  const { delaiRelanceJours } = useSettings();
   const [notes, setNotes] = useState('');
   const [notesDirty, setNotesDirty] = useState(false);
+
+  async function handleAjouterActivite(saisie: Parameters<typeof ajouterActivite>[0]) {
+    if (!prospect) return { error: 'Prospect introuvable.' };
+    const { error } = await ajouterActivite(saisie, prospect.statut, delaiRelanceJours);
+    if (!error) await refetch();
+    return { error };
+  }
 
   // Garde `notes` synchronisé avec les données chargées, sauf pendant une
   // saisie en cours (on ne veut pas écraser ce que la personne est en train
@@ -43,7 +56,7 @@ export function FicheProspect() {
         <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
           {error ?? 'Ce prospect est introuvable.'}
         </p>
-        <Link to="/" className="mt-4 inline-block text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
+        <Link to="/pipeline" className="mt-4 inline-block text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
           ← Retour au pipeline
         </Link>
       </div>
@@ -52,7 +65,7 @@ export function FicheProspect() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <Link to="/" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
+      <Link to="/pipeline" className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">
         ← Retour au pipeline
       </Link>
 
@@ -196,6 +209,20 @@ export function FicheProspect() {
             </ul>
           </>
         )}
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-sm font-semibold">Ajouter une activité</h2>
+        <div className="mt-2">
+          <ActiviteForm onAjouter={handleAjouterActivite} />
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h2 className="text-sm font-semibold">Journal</h2>
+        <div className="mt-2">
+          <JournalActivites activities={activities} />
+        </div>
       </div>
     </div>
   );
