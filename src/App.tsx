@@ -12,9 +12,9 @@ import { Statistiques } from './pages/Statistiques';
 import { Parametres } from './pages/Parametres';
 import { VoirMaquette } from './pages/VoirMaquette';
 
-// /voir est publique (un prospect externe l'ouvre depuis un message reçu,
-// sans compte) : elle doit rester accessible même sans session, donc hors
-// de la logique d'authentification ci-dessous.
+// /voir/:id est publique (un prospect externe l'ouvre depuis un message
+// reçu, sans compte) : elle doit rester accessible même sans session, donc
+// hors de la logique d'authentification ci-dessous.
 function AppAuthentifiee() {
   const { session, loading } = useSession();
 
@@ -50,7 +50,7 @@ export function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/voir" element={<VoirMaquette />} />
+          <Route path="/voir/:id" element={<VoirMaquette />} />
           <Route path="/*" element={<AppAuthentifiee />} />
         </Routes>
       </BrowserRouter>

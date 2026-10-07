@@ -70,24 +70,6 @@ const DEFAULT_TEMPLATES: Array<{ nom: string; canal: 'sms' | 'mail'; objet: stri
   },
 ];
 
-async function seedTemplates(supabase: ReturnType<typeof createClient>, userId: string) {
-  const { data: existants, error: lookupError } = await supabase
-    .from('templates')
-    .select('nom')
-    .eq('user_id', userId);
-  if (lookupError) throw lookupError;
-
-  const nomsExistants = new Set((existants ?? []).map((t) => t.nom));
-  const aCreer = DEFAULT_TEMPLATES.filter((t) => !nomsExistants.has(t.nom));
-  if (aCreer.length === 0) return 0;
-
-  const { error: insertError } = await supabase
-    .from('templates')
-    .insert(aCreer.map((t) => ({ ...t, user_id: userId })));
-  if (insertError) throw insertError;
-  return aCreer.length;
-}
-
 async function main() {
   const supabaseUrl = requireEnv('SUPABASE_URL');
   const serviceRoleKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY');
@@ -216,7 +198,21 @@ async function main() {
     }
   }
 
-  const templatesCreated = await seedTemplates(supabase, userId);
+  const { data: templatesExistants, error: templatesLookupError } = await supabase
+    .from('templates')
+    .select('nom')
+    .eq('user_id', userId);
+  if (templatesLookupError) throw templatesLookupError;
+
+  const nomsTemplatesExistants = new Set((templatesExistants ?? []).map((t) => t.nom));
+  const templatesACreer = DEFAULT_TEMPLATES.filter((t) => !nomsTemplatesExistants.has(t.nom));
+  if (templatesACreer.length > 0) {
+    const { error: templatesInsertError } = await supabase
+      .from('templates')
+      .insert(templatesACreer.map((t) => ({ ...t, user_id: userId })));
+    if (templatesInsertError) throw templatesInsertError;
+  }
+  const templatesCreated = templatesACreer.length;
 
   console.log(
     `Terminé : ${created} prospect(s) créé(s), ${updated} mis à jour, ` +

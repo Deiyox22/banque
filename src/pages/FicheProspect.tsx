@@ -152,7 +152,7 @@ export function FicheProspect() {
         ) : (
           <>
             <div className="mt-2">
-              <MockupPreview storagePath={mockups[0].storage_path} />
+              <MockupPreview mockupId={mockups[0].id} />
             </div>
             <ul className="mt-4 space-y-2">
               {mockups.map((mockup) => (

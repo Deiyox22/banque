@@ -16,7 +16,7 @@ export function MaquetteCard({
   uploading: boolean;
   onFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
-  const { html, url, error } = useMockupHtml(mockup.storage_path);
+  const { html, error } = useMockupHtml(mockup.id);
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -32,16 +32,14 @@ export function MaquetteCard({
           >
             {mockup.prospect.nom}
           </Link>
-          {url && (
-            <a
-              href={lienAffichageMaquette(url)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"
-            >
-              Ouvrir ↗
-            </a>
-          )}
+          <a
+            href={lienAffichageMaquette(mockup.id)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"
+          >
+            Ouvrir ↗
+          </a>
         </div>
         <div className="mt-1">
           <StatutBadge statut={mockup.prospect.statut} />

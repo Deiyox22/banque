@@ -4,8 +4,8 @@ import { lienAffichageMaquette } from '../lib/mockupViewerUrl';
 
 type Taille = 'mobile' | 'ordinateur';
 
-export function MockupPreview({ storagePath }: { storagePath: string }) {
-  const { html, url, error } = useMockupHtml(storagePath);
+export function MockupPreview({ mockupId }: { mockupId: string }) {
+  const { html, error } = useMockupHtml(mockupId);
   const [taille, setTaille] = useState<Taille>('mobile');
 
   return (
@@ -31,16 +31,14 @@ export function MockupPreview({ storagePath }: { storagePath: string }) {
             Ordinateur
           </button>
         </div>
-        {url && (
-          <a
-            href={lienAffichageMaquette(url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"
-          >
-            Ouvrir dans un nouvel onglet ↗
-          </a>
-        )}
+        <a
+          href={lienAffichageMaquette(mockupId)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-medium text-sky-600 hover:underline dark:text-sky-400"
+        >
+          Ouvrir dans un nouvel onglet ↗
+        </a>
       </div>
 
       {error && (
